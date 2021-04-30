@@ -1,49 +1,61 @@
-DEMO.F1 <-function(X,X_star)
+usethis::use_package("MLmetrics") 
+
+
+DEMO.generate_data<-function(type="trid",p=4^5,n=100,normalize=TRUE)
 {
-	X@x=X@x*0+1;
-	X_star@x=X_star@x*0+1;
+	set.seed(1);
 
-	temp=X-X_star;
-
-	TP=length(which(temp@x==0));
-	FP_plus_FN=length(which(temp@x != 0));
-		
-	F1= TP / ( TP + 0.5*( FP_plus_FN ) );
-
-	return(F1);
-}
-
-
-DEMO.set_dataset_folder<-function(folder)
-{
-	assign("SQUIC_DEMO_dataset_folder", folder, envir = .GlobalEnv)
-}
-
-DEMO.load_data<-function(p , n , normalize=TRUE)
-{
-    matrix_folder=SQUIC_DEMO_dataset_folder;
+    start_time <- Sys.time()
 	
-    print(sprintf("# Reading Matrix From file: p=%d n=%d",p,n));
+    print(sprintf("# Generating Percision Matrix: type=%s p=%d n=%d",type,p,n));
 
-	filename=paste(matrix_folder , "/" , "p", format(p, scientific = FALSE) , "_n" , format(n, scientific = FALSE) , ".RData", sep = "");
-	out<-get(load(filename));
+	if(type=="eye") # Idendity Matrix for iC_star
+	{
+		iC_star <- Matrix::Diagonal(p);
+	}
+	else if(type=="trid") # Tridiagiaonl matrix for iC_star 
+	{
+		iC_star <- Matrix::bandSparse(p, p,
+				(-1):1,
+				list(rep(-.5, p-1), 
+					rep(1.25, p), 
+					rep(-.5, p-1)));
+		iC_star[1,1]=1.25;
+		iC_star[p,p]=1.25;
+	}
+		else if(type=="rand")  # Random matrix for iC_star (averag of 5 nnz per row) 
+	{
+		nnz_per_row=5;
+
+		# Make PSD symmetric Random Matrix
+		iC_star <-Matrix::rsparsematrix(p,p,NULL,nnz_per_row*p/2,symmetric=TRUE);
+		x=Matrix::colSums(abs(iC_star))+1;
+		D=Matrix::Diagonal(p,x);
+		iC_star<- iC_star+D;
+
+	}else{
+		stop("Unknown matrix type.")
+	}
+
+	# Generate data
+	z    <- replicate(n,rnorm(p));
+	iC_L <- chol(iC_star);
+	data <- matrix(solve(iC_L,z),p,n);
+
+	finish_time <- Sys.time()
+	print(sprintf("# Generating Data: time=%f",finish_time-start_time));
+
 
 	if(normalize){
-		v=apply(out$data,1,var);
-		# R uses n-1 as denominator .. here we fore n
-		v = v*(n-1)/n;
-		v=1/sqrt(v);
-		D=Matrix::Diagonal(n=length(v),x=v);
-		out$data= as.matrix(D%*% out$data);
-		output <- list(
-			"data" = out$data, 
-			"X_star" = out$X_star,
-			"D" = D
-		);
+        output <- list(
+            "data"   = t(scale(t(data))),
+            "X_star" = iC_star,
+            "var"    = apply(data,1,var)
+        );
 	}else{
 		output <- list(
-			"data" = out$data, 
-			"X_star" = out$X_star
+			"data"   = data, 
+			"X_star" = iC_star
 		);
 	}
 
@@ -51,142 +63,140 @@ DEMO.load_data<-function(p , n , normalize=TRUE)
 }
 
 
-DEMO.CVX<- function(p,n, lambda=1 , lambda_factor = 1/1.1, R=20 ){
-
-	out=SQUIC::DEMO.load_data( p=p , n=n );
-	X_star=out$X_star;
-	data=out$data;
-
-	time=Sys.time();
-
-	out=SQUIC::SQUIC_CVX( data , lambda=lambda , R=R, );
-
-	time=Sys.time()-time;
-
-
-
-
-
-}
-
-DEMO.lambda_search<- function(p,n,lambda_sample=.1, K=5){
-
-  	# Generate data
-	out=SQUIC::DEMO.load_data( p=p , n=n );
-	X_star=out$X_star;
-	data=out$data;
-
-	time_CV_S = Sys.time();
-	
-	# Generate a lambda_set
-	out=SQUIC::SQUIC_S(data=data , lambda_sample=lambda_sample ,lambda_set_length=10);
-	print("SQUIC::SQUIC_S");
-	lambda_set=out$lambda_set;
-
-	# Do CV on for best lambda using AIC
-	out=SQUIC::SQUIC_CV(data=data , lambda_set=lambda_set , K=K );
-	print("SQUIC::SQUIC_CV");
-	lambda_opt_AIC=out$lambda_opt_AIC;
-	lambda_opt_BIC=out$lambda_opt_BIC;
-
-	CV_mean_AIC=out$CV_mean_AIC;
-	CV_mean_BIC=out$CV_mean_BIC;
-
-	time_CV_S = as.numeric(Sys.time()- time_CV_S);
-
-	# Compute the entire lambda path
-	f1_set=replicate(length(lambda_set), 0);
-	acc_set=replicate(length(lambda_set), 0);
-	nnzpr_X_set=replicate(length(lambda_set), 0);	
-	time_set=replicate(length(lambda_set), 0);	
-	
-	for (i in 1:length(lambda_set)) {
-		time_set[i]= Sys.time();
-		out=SQUIC::DEMO.compare(alg="SQUIC" , data=data , lambda=lambda_set[i] , tol=1e-3 , max_iter=5 , X_star=X_star );
-		f1_set[i]=out$f1;
-		nnzpr_X_set[i]=(Matrix::nnzero(out$X)/nrow(out$X));
-		time_set[i]= as.numeric(Sys.time()- time_set[i]);
-	}
-
-	output=list(
-		"time_set"        = time_set,
-		"time_CV_S"       = time_CV_S,
- 		"nnzpr_X_set"	  = nnzpr_X_set,
-		"f1_set"     	  = f1_set, 
-		"lambda_set" 	  = lambda_set,	
-		"lambda_opt_AIC"  = lambda_opt_AIC,	
-		"lambda_opt_BIC"  = lambda_opt_BIC,	
-		"lambda_opt_LL"   = lambda_opt_LL,								
-		"CV_mean_AIC"	  = CV_mean_AIC,
-		"CV_mean_BIC"	  = CV_mean_BIC	
-		);
-
-	return(output);
-}
-
-DEMO.performance <- function(p_set,lambda=0.4,n=100,tol=1e-4,max_iter=10) 
+DEMO.performance <- function(p_set,type="trid",lambda=0.4,n=100,tol=1e-4,max_iter=10) 
 {
 
-	time_squic		<-replicate(p_set, 0);
-	time_equal		<-replicate(p_set, 0);	
-	time_quic		<-replicate(p_set, 0);
+	l<-length(p_set)
+	out_squic		<-replicate(l, 0);
+	out_equal		<-replicate(l, 0);	
+	out_glasso		<-replicate(l, 0);
 
-	for (i in 1:length(p_set)) {
+	for (i in 1:l) {
 
         p=p_set[i];
 
         # Generate data
-	    out<-SQUIC::DEMO.load_data( p=p , n=n );
+	    out<-SQUIC::DEMO.generate_data( type=type , p=p , n=n );
 	    X_star<-out$X_star;
-	    data_full<-out$data;
+	    data<-out$data;
 
 		print(sprintf("Benchmark for p=%d started",p));
 
-		out<-SQUIC::DEMO.compare(alg="SQUIC"   , data_train=data_full , lambda=lambda , tol=tol , max_iter=max_iter , X_star=NULL);
-		time_squic[i]<-out$time;
+		out<-SQUIC::DEMO.compare(alg="SQUIC"   , data=data , lambda=lambda , tol=tol , max_iter=max_iter , X_star=NULL);
+		out_squic[i]<-out$time;
 
-		out<-SQUIC::DEMO.compare(alg="EQUAL"   , data_train=data_full , lambda=lambda , tol=tol , max_iter=max_iter , X_star=NULL);
-		time_equal[i]<-out$time;
+		out<-SQUIC::DEMO.compare(alg="EQUAL"   , data=data , lambda=lambda , tol=tol , max_iter=max_iter , X_star=NULL);
+		out_equal[i]<-out$time;
 
-		out<-SQUIC::DEMO.compare(alg="QUIC"    ,  data_train=data_full , lambda=lambda , tol=tol , max_iter=max_iter , X_star=NULL);
-		time_quic[i]<-out$time;			
+		out<-SQUIC::DEMO.compare(alg="glasso"    ,  data=data , lambda=lambda , tol=tol , max_iter=max_iter , X_star=NULL);
+		out_glasso[i]<-out$time;			
 	}
 
 	output <- list(
-		"time_squic"   			= time_squic, 
-		"time_equal" 			= time_equal, 		
-		"time_quic" 			= time_quic 			
+		"time_squic"   			= out_squic, 
+		"time_equal" 			= out_equal, 		
+		"time_glasso" 			= out_glasso 			
 		)
 
 	return(output);
 }
 
-DEMO.compare <- function(alg,data,lambda=0.5,tol=1e-4,max_iter=10, X_star= NULL) 
+
+DEMO.accuracy <- function(lambda_set=c(.6,.5),type="trid",p=500,n=100,tol=1e-4,max_iter=10) 
+{
+
+    # Generate data
+	out<-SQUIC::DEMO.generate_data( type=type , p=p , n=n );
+	X_star<-out$X_star;
+	data<-out$data;
+
+	l<-length(lambda_set)
+	out_squic		<-replicate(l, 0);
+	out_equal		<-replicate(l, 0);	
+	out_glasso		<-replicate(l, 0);
+
+	for (i in 1:l) {
+
+        lambda=lambda_set[i];
+
+		print(sprintf("Benchmark for lambda=%f started",lambda));
+
+		out<-SQUIC::DEMO.compare(alg="SQUIC"   , data=data , lambda=lambda , tol=tol , max_iter=max_iter , X_star=X_star);
+		out_squic[i]<-out$f1;
+
+		out<-SQUIC::DEMO.compare(alg="EQUAL"   , data=data , lambda=lambda , tol=tol , max_iter=max_iter , X_star=X_star);
+		out_equal[i]<-out$f1;
+
+		out<-SQUIC::DEMO.compare(alg="glasso"  ,  data=data , lambda=lambda , tol=tol , max_iter=max_iter , X_star=X_star);
+		out_glasso[i]<-out$f1;			
+	}
+
+	output <- list(
+		"f1_squic"   			= out_squic, 
+		"f1_equal" 			    = out_equal, 		
+		"f1_glasso" 			= out_glasso 			
+		)
+
+	return(output);
+}
+
+DEMO.compare <- function(alg,data,lambda=0.5,tol=1e-4,max_iter=10, X_star= NULL, M=NULL) 
 {
 	data_t <- Matrix::t(data);
 
 	verbose = 1;
 
 	time_start <- Sys.time()
-	if(alg=="QUIC")
-	{
-		print("#QUIC")
-		# QUIC
-		out	<-QUIC::QUIC(S=cov(data_t), rho=lambda, path = NULL, tol = tol, msg = verbose, maxIter = max_iter, X.init =NULL, W.init = NULL)
-		X	<-out$X;
-	}
-	else if(alg=="SQUIC")
+
+	if(alg=="SQUIC")
 	{
 		print("#SQUIC")
 		# SQUIC
-		out	<-SQUIC::SQUIC(Y1=data ,lambda=lambda , max_iter=max_iter , drop_tol=tol/10 , term_tol=tol , verbose=verbose );
+		out	<-SQUIC::SQUIC(
+			Y=data,
+			lambda=lambda,
+			max_iter=max_iter, 
+			drop_tol=tol/10, 
+			term_tol=tol, 
+			verbose=verbose,
+			mode=0, 
+			M=M, 
+			X0=NULL, 
+			W0=NULL
+			);
+
 		X	<-out$X;
+	}
+	else if(alg=="glasso")
+	{
+		print("#glasso")
+		# glasso
+		out	<-glasso::glasso(
+			s=cov(data_t), 
+			rho = lambda, 
+			nobs=NULL, 
+			zero=NULL, 
+			thr=tol, 
+			maxit=max_iter,  
+			approx=FALSE,
+			penalize.diagonal=TRUE,w.init=NULL,wi.init=NULL, trace=FALSE);
+		X	<- as(out$wi, "sparseMatrix") ;
 	}
 	else if(alg=="EQUAL")
 	{
 		print("#EQUAL")
 		# EQUAL
-		out	<-EQUAL::EQUAL(X=data_t,type=TRUE,sdiag=FALSE,lambda=lambda,lambda.min=sqrt(log(ncol(data_t))/nrow(data_t)),nlambda=1,err=tol,maxIter = max_iter,rho=1)
+		out	<-EQUAL::EQUAL(
+			X=data_t,
+			type=TRUE,
+			sdiag=FALSE,
+			lambda=lambda,
+			lambda.min=sqrt(log(ncol(data_t))/nrow(data_t)),
+			nlambda=1,
+			err=tol,
+			maxIter = max_iter,
+			rho=1);
+
 		X	<-out$Omega[[1]];
 	}
 	else
@@ -200,12 +210,14 @@ DEMO.compare <- function(alg,data,lambda=0.5,tol=1e-4,max_iter=10, X_star= NULL)
 	{
 		# Convert matrix to labels
         print("#Computing F1-Score & Accuracy")
-		F1=DEMO.F1(X,X_star);
+
+		X_star_dense = (as.vector(X_star)!=0)*1;
+		X_dense = (as.vector(X)!=0)*1;
 
 		output <- list(
 			"time" = time_end-time_start,
-			"X"    = X, 
-			"f1"   = F1			
+			"X"    = X,
+			"f1"   = MLmetrics::F1_Score(X_star_dense,X_dense,positive="1")			
 		);
 
 	}else{
@@ -219,3 +231,5 @@ DEMO.compare <- function(alg,data,lambda=0.5,tol=1e-4,max_iter=10, X_star= NULL)
 
 	return(output);
 }
+
+
