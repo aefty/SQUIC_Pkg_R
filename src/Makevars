@@ -16,35 +16,44 @@
 VERSION=1.2
 
 PLATFORM:=$(shell echo $$OSTYPE)
-PATH_TO_libSQUIC:=${HOME}
-FILE_libSQUIC:=
 
-# For Mac
+$(info )
+ ifndef PATH_TO_libSQUIC
+$(error ## Environment variable PATH_TO_libSQUIC is not set ##)
+endif
+$(info ## PATH_TO_libSQUIC=${PATH_TO_libSQUIC} ##)
+$(info )
+
+$(info )
+# Get filename
+FILE_libSQUIC:=
 ifneq (,$(findstring darwin,$(PLATFORM)))
  PATH_TO_libSQUIC:=${HOME}
  FILE_libSQUIC:=libSQUIC.dylib
- $(info	### ${PLATFORM} (MAC) detected - expecting SQUIC shared library ${FILE_libSQUIC} at ${PATH_TO_libSQUIC} ###)
+ $(info	## ${PLATFORM} (MAC) detected - expecting SQUIC shared library ${FILE_libSQUIC} at ${PATH_TO_libSQUIC} ##)
 else ifneq (,$(findstring linux,$(PLATFORM)))	
  PATH_TO_libSQUIC:=${HOME}
  FILE_libSQUIC:=libSQUIC.so
- $(info	### ${PLATFORM} (Linux) detected - expecting SQUIC shared library ${FILE_libSQUIC} at ${PATH_TO_libSQUIC} ###)
+ $(info	## ${PLATFORM} (Linux) detected - expecting SQUIC shared library ${FILE_libSQUIC} at ${PATH_TO_libSQUIC} ##)
 else ifneq (,$(findstring windows,$(PLATFORM)))
  PATH_TO_libSQUIC:=${HOME}
  FILE_libSQUIC:=libSQUIC.dll
- $(info	### ${PLATFORM} (Windows) detected - expecting SQUIC shared library ${FILE_libSQUIC} at ${PATH_TO_libSQUIC} ###)
+ $(info	## ${PLATFORM} (Windows) detected - expecting SQUIC shared library ${FILE_libSQUIC} at ${PATH_TO_libSQUIC} ##)
 else
- $(error ### Platform not detected!###)
+ $(error ## Platform not detected! ##)
 endif
+$(info )
 
 FILE_PATH_TO_libSQUIC:=${PATH_TO_libSQUIC}/${FILE_libSQUIC}
 
+$(info )
 # check if file exists
 ifneq ("$(wildcard $(FILE_PATH_TO_libSQUIC) )","")
- $(info	### ${FILE_PATH_TO_libSQUIC} found ! ###)
+ $(info	## ${FILE_PATH_TO_libSQUIC} found ! <<)
 else
- $(info ### ${FILE_PATH_TO_libSQUIC} not found. Go to www.squic.com and download ... ###)
- $(error Error: Exit)
+ $(error ## ${FILE_PATH_TO_libSQUIC} not found. Go to www.squic.com and download ... ##)
 endif
+$(info )
 
 CXX_STD = CXX11
 PKG_CXXFLAGS =-O3 # will defualt back to -O2
@@ -52,6 +61,6 @@ PKG_LIBS = -L${PATH_TO_libSQUIC} -lSQUIC
 PKG_CPPFLAGS = -DARMA_64BIT_WORD=1
 
 all: $(SHLIB)
-	 @if command -v install_name_tool; then install_name_tool -change libSQUIC.dylib ${PATH_TO_libSQUIC}/libSQUIC.dylib $(SHLIB); fi
+	@if command -v install_name_tool; then install_name_tool -change libSQUIC.dylib ${PATH_TO_libSQUIC}/libSQUIC.dylib $(SHLIB); fi
 
 

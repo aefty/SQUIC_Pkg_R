@@ -1,6 +1,5 @@
 usethis::use_package("MLmetrics") 
 
-
 DEMO.generate_data<-function(type="trid",p=4^5,n=100,normalize=TRUE)
 {
 	set.seed(1);
@@ -20,16 +19,14 @@ DEMO.generate_data<-function(type="trid",p=4^5,n=100,normalize=TRUE)
 				list(rep(-.5, p-1), 
 					rep(1.25, p), 
 					rep(-.5, p-1)));
-		iC_star[1,1]=1.25;
-		iC_star[p,p]=1.25;
 	}
 		else if(type=="rand")  # Random matrix for iC_star (averag of 5 nnz per row) 
 	{
-		nnz_per_row=5;
+		nnz_per_row=5; 
 
 		# Make PSD symmetric Random Matrix
-		iC_star <-Matrix::rsparsematrix(p,p,NULL,nnz_per_row*p/2,symmetric=TRUE);
-		x=Matrix::colSums(abs(iC_star))+1;
+		iC_star <-Matrix::rsparsematrix(p,p,NULL,nnz_per_row*p/2,symmetric=TRUE);# we need the divide by 2 (R assuming symmetric)
+		x=Matrix::rowSums(abs(iC_star))+1;
 		D=Matrix::Diagonal(p,x);
 		iC_star<- iC_star+D;
 
@@ -63,7 +60,7 @@ DEMO.generate_data<-function(type="trid",p=4^5,n=100,normalize=TRUE)
 }
 
 
-DEMO.performance <- function(p_set,type="trid",lambda=0.4,n=100,tol=1e-4,max_iter=10) 
+DEMO.performance <- function(type,p_set=c(4,16,64,256,1024,4096),lambda=0.4,n=100,tol=1e-4,max_iter=10) 
 {
 
 	l<-length(p_set)
@@ -102,7 +99,31 @@ DEMO.performance <- function(p_set,type="trid",lambda=0.4,n=100,tol=1e-4,max_ite
 }
 
 
-DEMO.accuracy <- function(lambda_set=c(.6,.5),type="trid",p=500,n=100,tol=1e-4,max_iter=10) 
+DEMO.CV <- function(type,lambda_set=c(.2,.25,.3,.35,.4,.45,.5,.55,.6),p=1024,n=100,tol=1e-4,max_iter=10) 
+{
+  
+  # Generate data
+  out<-SQUIC::DEMO.generate_data( type=type , p=p , n=n );
+  X_star<-out$X_star;
+  data<-out$data;
+  
+  print(sprintf("Benchmark for lambda=%f started",lambda));
+    
+  out<-SQUIC::SQUIC_CV(Y=data,lambda_set = lambda_set);
+
+
+  return(out);
+}
+
+
+DEMO.GR<- function(type,lambda_set=c(.2,.25,.3,.35,.4,.45,.5,.55,.6),p=1024,n=100,tol=1e-4,max_iter=10) 
+{
+  
+  
+}
+
+
+DEMO.accuracy <- function(type,lambda_set=c(.2,.25,.3,.35,.4,.45,.5,.55,.6),p=1024,n=100,tol=1e-4,max_iter=10) 
 {
 
     # Generate data
@@ -140,6 +161,53 @@ DEMO.accuracy <- function(lambda_set=c(.6,.5),type="trid",p=500,n=100,tol=1e-4,m
 	return(output);
 }
 
+
+
+DEMO.accuracy_M <- function(type,corrupt_nnz_fac=0,lambda=.5,alpha_set=c(.0,.1,.2,.5,.6,.7,.8,.9,1),p=1024,n=100,tol=1e-4,max_iter=10) 
+{
+
+  # Generate data
+	out<-SQUIC::DEMO.generate_data( type=type , p=p , n=n );
+	X_star<-out$X_star;
+	data<-out$data;
+
+	# Set the structure of M to be that of X_star .... that would be nice:)
+	if(corrupt_nnz_fac>0){
+		nnz_per_row = corrupt_nnz_fac*Matrix::nnzero(X_star)/p;
+		M = X_star  + Matrix::rsparsematrix(p,p,NULL,nnz_per_row*p/2,symmetric=TRUE);
+	}else{
+		M = X_star;
+	}
+
+	l           <-length(alpha_set)
+	f1_squic		<-replicate(l, 0);
+	fro_squic		<-replicate(l, 0);	
+
+	for (i in 1:l) {
+	  
+	  alpha=alpha_set[i];
+	  
+	  # reset M keeping the structure
+	  M@x=M@x*0+1;
+	  M = alpha*lambda*M;
+  
+		print(sprintf("Benchmark for alpha=%f started",alpha));
+
+		out<-SQUIC::DEMO.compare(alg="SQUIC" , data=data , lambda=lambda , tol=tol , max_iter=max_iter , X_star=X_star, M = M );
+		f1_squic[i]<-out$f1;
+		fro_squic[i]<-out$fro;
+	}
+
+	output <- list(
+		"f1_squic"	= f1_squic,
+		"fro_squic"	= fro_squic			
+	)
+
+	return(output);
+}
+
+
+
 DEMO.compare <- function(alg,data,lambda=0.5,tol=1e-4,max_iter=10, X_star= NULL, M=NULL) 
 {
 	data_t <- Matrix::t(data);
@@ -156,10 +224,9 @@ DEMO.compare <- function(alg,data,lambda=0.5,tol=1e-4,max_iter=10, X_star= NULL,
 			Y=data,
 			lambda=lambda,
 			max_iter=max_iter, 
-			drop_tol=tol/10, 
+			drop_tol=tol/2, 
 			term_tol=tol, 
 			verbose=verbose,
-			mode=0, 
 			M=M, 
 			X0=NULL, 
 			W0=NULL
@@ -211,13 +278,14 @@ DEMO.compare <- function(alg,data,lambda=0.5,tol=1e-4,max_iter=10, X_star= NULL,
 		# Convert matrix to labels
         print("#Computing F1-Score & Accuracy")
 
-		X_star_dense = (as.vector(X_star)!=0)*1;
-		X_dense = (as.vector(X)!=0)*1;
+		X_star_dense_struc = (as.vector(X_star)!=0)*1;
+		X_dense_struc = (as.vector(X)!=0)*1;
 
 		output <- list(
 			"time" = time_end-time_start,
 			"X"    = X,
-			"f1"   = MLmetrics::F1_Score(X_star_dense,X_dense,positive="1")			
+			"fro"  = Matrix::norm(X_star-X,"f")/Matrix::norm(X_star,"f"),	
+			"f1"   = MLmetrics::F1_Score(X_star_dense_struc,X_dense_struc,positive="1")			
 		);
 
 	}else{
@@ -231,5 +299,3 @@ DEMO.compare <- function(alg,data,lambda=0.5,tol=1e-4,max_iter=10, X_star= NULL,
 
 	return(output);
 }
-
-
