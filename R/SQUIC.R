@@ -83,8 +83,7 @@ SQUIC_S<-function(Y, lambda,verbose=1, M=NULL){
 		Y=Y , 
 		lambda=lambda ,
 		max_iter=0 , drop_tol=1e-6 , term_tol=1e-6 , 
-		verbose=verbose , mode=0,  
-		M=M , X0=NULL , W0=NULL);
+		verbose=verbose , M=M , X0=NULL , W0=NULL);
 
 	return(output);
 }
