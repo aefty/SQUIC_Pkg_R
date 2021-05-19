@@ -8,11 +8,7 @@ DEMO.generate_data<-function(type="trid",p=4^5,n=100,normalize=TRUE)
 	
     print(sprintf("# Generating Percision Matrix: type=%s p=%d n=%d",type,p,n));
 
-	if(type=="eye") # Idendity Matrix for iC_star
-	{
-		iC_star <- Matrix::Diagonal(p);
-	}
-	else if(type=="trid") # Tridiagiaonl matrix for iC_star 
+	if(type=="trid") # Tridiagiaonl matrix for iC_star 
 	{
 		iC_star <- Matrix::bandSparse(p, p,
 				(-1):1,
@@ -60,7 +56,7 @@ DEMO.generate_data<-function(type="trid",p=4^5,n=100,normalize=TRUE)
 }
 
 
-DEMO.performance <- function(type,p_set=c(4,16,64,256,1024,4096),lambda=0.4,n=100,tol=1e-4,max_iter=10) 
+DEMO.performance <- function(type,p_set=c(4,16,64,256,1024,4096),lambda=0.4,n=100,tol=1e-3,max_iter=100) 
 {
 
 	l<-length(p_set)
@@ -79,10 +75,10 @@ DEMO.performance <- function(type,p_set=c(4,16,64,256,1024,4096),lambda=0.4,n=10
 
 		print(sprintf("Benchmark for p=%d started",p));
 
-		out<-SQUIC::DEMO.compare(alg="SQUIC"   , data=data , lambda=lambda , tol=tol , max_iter=max_iter , X_star=NULL);
+		out<-SQUIC::DEMO.compare(alg="SQUIC"   , data=data , lambda=lambda ,  tol=tol , max_iter=max_iter , X_star=NULL);
 		out_squic[i]<-out$time;
 
-		out<-SQUIC::DEMO.compare(alg="EQUAL"   , data=data , lambda=lambda , tol=tol , max_iter=max_iter , X_star=NULL);
+		out<-SQUIC::DEMO.compare(alg="EQUAL"   , data=data , lambda=lambda ,   tol=tol , max_iter=max_iter , X_star=NULL);
 		out_equal[i]<-out$time;
 
 		out<-SQUIC::DEMO.compare(alg="glasso"    ,  data=data , lambda=lambda , tol=tol , max_iter=max_iter , X_star=NULL);
@@ -99,31 +95,7 @@ DEMO.performance <- function(type,p_set=c(4,16,64,256,1024,4096),lambda=0.4,n=10
 }
 
 
-DEMO.CV <- function(type,lambda_set=c(.2,.25,.3,.35,.4,.45,.5,.55,.6),p=1024,n=100,tol=1e-4,max_iter=10) 
-{
-  
-  # Generate data
-  out<-SQUIC::DEMO.generate_data( type=type , p=p , n=n );
-  X_star<-out$X_star;
-  data<-out$data;
-  
-  print(sprintf("Benchmark for lambda=%f started",lambda));
-    
-  out<-SQUIC::SQUIC_CV(Y=data,lambda_set = lambda_set);
-
-
-  return(out);
-}
-
-
-DEMO.GR<- function(type,lambda_set=c(.2,.25,.3,.35,.4,.45,.5,.55,.6),p=1024,n=100,tol=1e-4,max_iter=10) 
-{
-  
-  
-}
-
-
-DEMO.accuracy <- function(type,lambda_set=c(.2,.25,.3,.35,.4,.45,.5,.55,.6),p=1024,n=100,tol=1e-4,max_iter=10) 
+DEMO.accuracy <- function(type,lambda_set=c(.2,.25,.3,.35,.4,.45,.5,.55,.6),p=1024,n=100,tol=1e-3,max_iter=100) 
 {
 
     # Generate data
@@ -163,7 +135,7 @@ DEMO.accuracy <- function(type,lambda_set=c(.2,.25,.3,.35,.4,.45,.5,.55,.6),p=10
 
 
 
-DEMO.accuracy_M <- function(type,corrupt_nnz_fac=0,lambda=.5,alpha_set=c(.0,.1,.2,.5,.6,.7,.8,.9,1),p=1024,n=100,tol=1e-4,max_iter=10) 
+DEMO.accuracy_M <- function(type,corrupt_nnz_fac=0,lambda=.5,alpha_set=c(.0,.1,.2,.5,.6,.7,.8,.9,1),p=1024,n=100,tol=1e-3,max_iter=10) 
 {
 
   # Generate data
@@ -179,9 +151,9 @@ DEMO.accuracy_M <- function(type,corrupt_nnz_fac=0,lambda=.5,alpha_set=c(.0,.1,.
 		M = X_star;
 	}
 
-	l           <-length(alpha_set)
-	f1_squic		<-replicate(l, 0);
-	fro_squic		<-replicate(l, 0);	
+	l			<-length(alpha_set)
+	f1_squic	<-replicate(l, 0);
+	fro_squic	<-replicate(l, 0);	
 
 	for (i in 1:l) {
 	  
@@ -207,8 +179,7 @@ DEMO.accuracy_M <- function(type,corrupt_nnz_fac=0,lambda=.5,alpha_set=c(.0,.1,.
 }
 
 
-
-DEMO.compare <- function(alg,data,lambda=0.5,tol=1e-4,max_iter=10, X_star= NULL, M=NULL) 
+DEMO.compare <- function(alg,data,lambda=0.5,tol=1e-3,max_iter=100, X_star= NULL, M=NULL) 
 {
 	data_t <- Matrix::t(data);
 
@@ -224,7 +195,7 @@ DEMO.compare <- function(alg,data,lambda=0.5,tol=1e-4,max_iter=10, X_star= NULL,
 			Y=data,
 			lambda=lambda,
 			max_iter=max_iter, 
-			drop_tol=tol/2, 
+			drop_tol=tol/10, 
 			term_tol=tol, 
 			verbose=verbose,
 			M=M, 
