@@ -16,16 +16,16 @@ SQUIC <- function(Y, lambda, max_iter=100, drop_tol=1e-4, term_tol=1e-3,verbose=
     stop('#SQUIC: number of samples (n) must be larger than 1 .');
   }
   if(lambda<=0){
-	  stop('#SQUIC: lambda must great than zero.');
+	  stop('#SQUIC: lambda must be great than zero.');
   }
   if(max_iter<0){
 	  stop('#SQUIC: max_iter cannot be negative.');
   }
   if(drop_tol<=0){
-	  stop('#SQUIC: drop_tol must great than zero.');
+	  stop('#SQUIC: drop_tol must be great than zero.');
   }
   if(term_tol<=0){
-	  stop('#SQUIC: term_tol must great than zero.');
+	  stop('#SQUIC: term_tol must be great than zero.');
   } 
 
   if(is.null(M)){
