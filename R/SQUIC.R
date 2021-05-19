@@ -1,7 +1,7 @@
 usethis::use_package("Matrix") 
 
 # Main function
-SQUIC <- function(Y, lambda, max_iter, drop_tol=1e-4, term_tol=1e-3,verbose=1, M=NULL, X0=NULL, W0=NULL) {
+SQUIC <- function(Y, lambda, max_iter=100, drop_tol=1e-4, term_tol=1e-3,verbose=1, M=NULL, X0=NULL, W0=NULL) {
   
   verbose = min(verbose,1);
   
@@ -32,8 +32,10 @@ SQUIC <- function(Y, lambda, max_iter, drop_tol=1e-4, term_tol=1e-3,verbose=1, M
 	  # Make empty sparse matrix of type dgCMatrix.
 	  M	= as(Matrix::sparseMatrix(dims = c(p,p), i={}, j={}),"dgCMatrix");
   }else{
-    # Force symmetrix
+
+    # Make all postive, drop all zeros and force symmetrix
     M<-abs(M);
+    M<-drop0(M);
   	M<-Matrix::forceSymmetric(M,uplo="L"); 
   }
 
