@@ -2,7 +2,7 @@ usethis::use_package("MLmetrics")
 
 DEMO.generate_data<-function(type="trid",p=4^5,n=100,normalize=TRUE)
 {
-	set.seed(1);
+	set.seed(0);
 
     start_time <- Sys.time()
 	
@@ -10,7 +10,7 @@ DEMO.generate_data<-function(type="trid",p=4^5,n=100,normalize=TRUE)
 
 	if(type=="trid") # Tridiagiaonl matrix for iC_star 
 	{
-		iC_star <- Matrix::bandSparse(p, p,
+		iC_star = Matrix::bandSparse(p, p,
 				(-1):1,
 				list(rep(-.5, p-1), 
 					rep(1.25, p), 
@@ -21,21 +21,21 @@ DEMO.generate_data<-function(type="trid",p=4^5,n=100,normalize=TRUE)
 		nnz_per_row=5; 
 
 		# Make PSD symmetric Random Matrix
-		iC_star <-Matrix::rsparsematrix(p,p,NULL,nnz_per_row*p/2,symmetric=TRUE);# we need the divide by 2 (R assuming symmetric)
+		iC_star=Matrix::rsparsematrix(nrow=p,ncol=p,nnz=nnz_per_row*p/2,symmetric=TRUE);# we need the divide by 2 (R assuming symmetric)
 		x=Matrix::rowSums(abs(iC_star))+1;
 		D=Matrix::Diagonal(p,x);
-		iC_star<- iC_star+D;
+		iC_star=iC_star+D;
 
 	}else{
 		stop("Unknown matrix type.")
 	}
 
 	# Generate data
-	z    <- replicate(n,rnorm(p));
-	iC_L <- chol(iC_star);
-	data <- matrix(solve(iC_L,z),p,n);
+	z    = replicate(n,rnorm(p));
+	iC_L = chol(iC_star);
+	data = matrix(solve(iC_L,z),p,n);
 
-	finish_time <- Sys.time()
+	finish_time = Sys.time()
 	print(sprintf("# Generating Data: time=%f",finish_time-start_time));
 
 
@@ -59,30 +59,30 @@ DEMO.generate_data<-function(type="trid",p=4^5,n=100,normalize=TRUE)
 DEMO.performance <- function(type,p_set=c(4,16,64,256,1024,4096),lambda=0.4,n=100,tol=1e-3,max_iter=100) 
 {
 
-	l<-length(p_set)
-	out_squic		<-replicate(l, 0);
-	out_equal		<-replicate(l, 0);	
-	out_glasso		<-replicate(l, 0);
+	l=length(p_set)
+	out_squic		=replicate(l, 0);
+	out_equal		=replicate(l, 0);	
+	out_glasso		=replicate(l, 0);
 
 	for (i in 1:l) {
 
         p=p_set[i];
 
         # Generate data
-	    out<-SQUIC::DEMO.generate_data( type=type , p=p , n=n );
-	    X_star<-out$X_star;
-	    data<-out$data;
+	    out=SQUIC::DEMO.generate_data( type=type , p=p , n=n );
+	    X_star=out$X_star;
+	    data=out$data;
 
 		print(sprintf("Benchmark for p=%d started",p));
 
-		out<-SQUIC::DEMO.compare(alg="SQUIC"   , data=data , lambda=lambda ,  tol=tol , max_iter=max_iter , X_star=NULL);
-		out_squic[i]<-out$time;
+		out=SQUIC::DEMO.compare(alg="SQUIC"   , data=data , lambda=lambda ,  tol=tol , max_iter=max_iter , X_star=NULL);
+		out_squic[i]=out$time;
 
-		out<-SQUIC::DEMO.compare(alg="EQUAL"   , data=data , lambda=lambda ,   tol=tol , max_iter=max_iter , X_star=NULL);
-		out_equal[i]<-out$time;
+		out=SQUIC::DEMO.compare(alg="EQUAL"   , data=data , lambda=lambda ,   tol=tol , max_iter=max_iter , X_star=NULL);
+		out_equal[i]=out$time;
 
-		out<-SQUIC::DEMO.compare(alg="glasso"    ,  data=data , lambda=lambda , tol=tol , max_iter=max_iter , X_star=NULL);
-		out_glasso[i]<-out$time;			
+		out=SQUIC::DEMO.compare(alg="glasso"    ,  data=data , lambda=lambda , tol=tol , max_iter=max_iter , X_star=NULL);
+		out_glasso[i]=out$time;			
 	}
 
 	output <- list(
@@ -99,14 +99,14 @@ DEMO.accuracy <- function(type,lambda_set=c(.2,.25,.3,.35,.4,.45,.5,.55,.6),p=10
 {
 
     # Generate data
-	out<-SQUIC::DEMO.generate_data( type=type , p=p , n=n );
-	X_star<-out$X_star;
-	data<-out$data;
+	out=SQUIC::DEMO.generate_data( type=type , p=p , n=n );
+	X_star=out$X_star;
+	data=out$data;
 
-	l<-length(lambda_set)
-	out_squic		<-replicate(l, 0);
-	out_equal		<-replicate(l, 0);	
-	out_glasso		<-replicate(l, 0);
+	l=length(lambda_set)
+	out_squic		=replicate(l, 0);
+	out_equal		=replicate(l, 0);	
+	out_glasso		=replicate(l, 0);
 
 	for (i in 1:l) {
 
@@ -114,14 +114,14 @@ DEMO.accuracy <- function(type,lambda_set=c(.2,.25,.3,.35,.4,.45,.5,.55,.6),p=10
 
 		print(sprintf("Benchmark for lambda=%f started",lambda));
 
-		out<-SQUIC::DEMO.compare(alg="SQUIC"   , data=data , lambda=lambda , tol=tol , max_iter=max_iter , X_star=X_star);
-		out_squic[i]<-out$f1;
+		out=SQUIC::DEMO.compare(alg="SQUIC"   , data=data , lambda=lambda , tol=tol , max_iter=max_iter , X_star=X_star);
+		out_squic[i]=out$f1;
 
-		out<-SQUIC::DEMO.compare(alg="EQUAL"   , data=data , lambda=lambda , tol=tol , max_iter=max_iter , X_star=X_star);
-		out_equal[i]<-out$f1;
+		out=SQUIC::DEMO.compare(alg="EQUAL"   , data=data , lambda=lambda , tol=tol , max_iter=max_iter , X_star=X_star);
+		out_equal[i]=out$f1;
 
-		out<-SQUIC::DEMO.compare(alg="glasso"  ,  data=data , lambda=lambda , tol=tol , max_iter=max_iter , X_star=X_star);
-		out_glasso[i]<-out$f1;			
+		out=SQUIC::DEMO.compare(alg="glasso"  ,  data=data , lambda=lambda , tol=tol , max_iter=max_iter , X_star=X_star);
+		out_glasso[i]=out$f1;			
 	}
 
 	output <- list(
@@ -135,7 +135,7 @@ DEMO.accuracy <- function(type,lambda_set=c(.2,.25,.3,.35,.4,.45,.5,.55,.6),p=10
 
 
 
-DEMO.accuracy_M <- function(type,corrupt_nnz_fac=0,lambda=.5,alpha_set=c(.0,.1,.2,.5,.6,.7,.8,.9,1),p=1024,n=100,tol=1e-3,max_iter=10) 
+DEMO.accuracy_MS <- function(type,lambda=.5,alpha_set=c(.0001,.1,.2,.3,.4,.5,.6,.7,.8,.9,1),p=1024,n=100,tol=1e-3,max_iter=100) 
 {
 
   # Generate data
@@ -144,9 +144,53 @@ DEMO.accuracy_M <- function(type,corrupt_nnz_fac=0,lambda=.5,alpha_set=c(.0,.1,.
 	data<-out$data;
 
 	# Set the structure of M to be that of X_star .... that would be nice:)
-	if(corrupt_nnz_fac>0){
-		nnz_per_row = corrupt_nnz_fac*Matrix::nnzero(X_star)/p;
-		M = X_star  + Matrix::rsparsematrix(p,p,NULL,nnz_per_row*p/2,symmetric=TRUE);
+	out = SQUIC::SQUIC_S(data,lambda=lambda/2);
+	T = abs(out$S);
+	
+
+	l			<-length(alpha_set)
+	f1_squic	<-replicate(l, 0);
+	fro_squic	<-replicate(l, 0);	
+
+	for (i in 1:l) {
+
+	  M=T;
+	  
+	  alpha=alpha_set[i];
+	  
+	  # reset M keeping the structure
+	  M@x=1/M@x;
+	  M@x=M@x/max(M@x);
+	  M = alpha*lambda*M;
+
+	  print(sprintf("Benchmark for alpha=%f started",alpha));
+
+	   out<-SQUIC::DEMO.compare(alg="SQUIC" , data=data , lambda=lambda , tol=tol , max_iter=max_iter , X_star=X_star, M = M );
+	   f1_squic[i]<-out$f1;
+	   fro_squic[i]<-out$fro;
+	}
+
+	output <- list(
+		"f1_squic"	= f1_squic,
+		"fro_squic"	= fro_squic			
+	)
+
+	return(output);
+}
+
+
+DEMO.accuracy_M <- function(type,c=0,lambda=.5,alpha_set=c(.0001,.1,.2,.3,.4,.5,.6,.7,.8,.9,1),p=1024,n=100,tol=1e-3,max_iter=100) 
+{
+
+  # Generate data
+	out<-SQUIC::DEMO.generate_data( type=type , p=p , n=n );
+	X_star<-out$X_star;
+	data<-out$data;
+
+	# Set the structure of M to be that of X_star .... that would be nice:)
+	if(c>0){
+		nnz_per_row = c*Matrix::nnzero(X_star)/p;
+		M = X_star  + Matrix::rsparsematrix(nrow=p,ncol=p,nnz=nnz_per_row*p/2,symmetric=TRUE);
 	}else{
 		M = X_star;
 	}
@@ -162,12 +206,12 @@ DEMO.accuracy_M <- function(type,corrupt_nnz_fac=0,lambda=.5,alpha_set=c(.0,.1,.
 	  # reset M keeping the structure
 	  M@x=M@x*0+1;
 	  M = alpha*lambda*M;
-  
-		print(sprintf("Benchmark for alpha=%f started",alpha));
 
-		out<-SQUIC::DEMO.compare(alg="SQUIC" , data=data , lambda=lambda , tol=tol , max_iter=max_iter , X_star=X_star, M = M );
-		f1_squic[i]<-out$f1;
-		fro_squic[i]<-out$fro;
+	  print(sprintf("Benchmark for alpha=%f started",alpha));
+
+	   out<-SQUIC::DEMO.compare(alg="SQUIC" , data=data , lambda=lambda , tol=tol , max_iter=max_iter , X_star=X_star, M = M );
+	   f1_squic[i]<-out$f1;
+	   fro_squic[i]<-out$fro;
 	}
 
 	output <- list(
@@ -177,6 +221,7 @@ DEMO.accuracy_M <- function(type,corrupt_nnz_fac=0,lambda=.5,alpha_set=c(.0,.1,.
 
 	return(output);
 }
+
 
 
 DEMO.compare <- function(alg,data,lambda=0.5,tol=1e-3,max_iter=100, X_star= NULL, M=NULL) 
@@ -195,7 +240,7 @@ DEMO.compare <- function(alg,data,lambda=0.5,tol=1e-3,max_iter=100, X_star= NULL
 			Y=data,
 			lambda=lambda,
 			max_iter=max_iter, 
-			drop_tol=tol/10, 
+			drop_tol=tol, 
 			term_tol=tol, 
 			verbose=verbose,
 			M=M, 
