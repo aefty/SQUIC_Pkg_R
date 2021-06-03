@@ -7,24 +7,24 @@
 using namespace Rcpp;
 
 // SQUIC_R
-List SQUIC_R(arma::mat& Y, double lambda, int max_iter, double drop_tol, double term_tol, int verbose, int mode, arma::sp_mat& M, arma::sp_mat& X0, arma::sp_mat& W0);
-RcppExport SEXP _SQUIC_SQUIC_R(SEXP YSEXP, SEXP lambdaSEXP, SEXP max_iterSEXP, SEXP drop_tolSEXP, SEXP term_tolSEXP, SEXP verboseSEXP, SEXP modeSEXP, SEXP MSEXP, SEXP X0SEXP, SEXP W0SEXP) {
-BEGIN_RCPP
+List SQUIC_R(arma::mat& Y, double lambda, int max_iter, double inv_tol, double term_tol, int verbose, int mode, arma::sp_mat& M, arma::sp_mat& X0, arma::sp_mat& W0);
+RcppExport SEXP _SQUIC_SQUIC_R(SEXP YSEXP, SEXP lambdaSEXP, SEXP max_iterSEXP, SEXP inv_tolSEXP, SEXP term_tolSEXP, SEXP verboseSEXP, SEXP modeSEXP, SEXP MSEXP, SEXP X0SEXP, SEXP W0SEXP) {
+    BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< arma::mat& >::type Y(YSEXP);
     Rcpp::traits::input_parameter< double >::type lambda(lambdaSEXP);
     Rcpp::traits::input_parameter< int >::type max_iter(max_iterSEXP);
-    Rcpp::traits::input_parameter< double >::type drop_tol(drop_tolSEXP);
+    Rcpp::traits::input_parameter< double >::type inv_tol(inv_tolSEXP);
     Rcpp::traits::input_parameter< double >::type term_tol(term_tolSEXP);
     Rcpp::traits::input_parameter< int >::type verbose(verboseSEXP);
     Rcpp::traits::input_parameter< int >::type mode(modeSEXP);
     Rcpp::traits::input_parameter< arma::sp_mat& >::type M(MSEXP);
     Rcpp::traits::input_parameter< arma::sp_mat& >::type X0(X0SEXP);
     Rcpp::traits::input_parameter< arma::sp_mat& >::type W0(W0SEXP);
-    rcpp_result_gen = Rcpp::wrap(SQUIC_R(Y, lambda, max_iter, drop_tol, term_tol, verbose, mode, M, X0, W0));
+    rcpp_result_gen = Rcpp::wrap(SQUIC_R(Y, lambda, max_iter, inv_tol, term_tol, verbose, mode, M, X0, W0));
     return rcpp_result_gen;
-END_RCPP
+    END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {

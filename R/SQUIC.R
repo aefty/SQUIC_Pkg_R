@@ -1,7 +1,7 @@
 usethis::use_package("Matrix") 
 
 # Main function
-SQUIC <- function(Y, lambda, max_iter=100, drop_tol=1e-3, term_tol=1e-3,verbose=1, M=NULL, X0=NULL, W0=NULL) {
+SQUIC <- function(Y, lambda, max_iter=100, inv_tol=1e-3, term_tol=1e-3,verbose=1, M=NULL, X0=NULL, W0=NULL) {
   
   verbose <- min(verbose,1);
   
@@ -21,18 +21,22 @@ SQUIC <- function(Y, lambda, max_iter=100, drop_tol=1e-3, term_tol=1e-3,verbose=
   if(max_iter<0){
 	  stop('#SQUIC: max_iter cannot be negative.');
   }
-  if(drop_tol<=0){
-	  stop('#SQUIC: drop_tol must be great than zero.');
+  if(inv_tol<=0){
+	  stop('#SQUIC: inv_tol must be great than zero.');
   }
   if(term_tol<=0){
 	  stop('#SQUIC: term_tol must be great than zero.');
   } 
 
-
   if(is.null(M)){
 	  # Make empty sparse matrix of type dgCMatrix.
 	  M = as(Matrix::sparseMatrix(dims = c(p,p), i={}, j={}),"dgCMatrix");
   }else{
+
+    if(nrow(M)==ncol(M)==p){
+      stop('#SQUIC: M must be square matrix with size pxp.');
+    } 
+
     # Make all postive, drop all zeros and force symmetrix
     M = Matrix::drop0(M);
     M <- abs(M);
@@ -40,10 +44,20 @@ SQUIC <- function(Y, lambda, max_iter=100, drop_tol=1e-3, term_tol=1e-3,verbose=
   }
 
   if(is.null(X0) || is.null(W0)){
+
 	  # Make empty sparse matrix of type dgCMatrix.
 	  X0 <- as(Matrix::sparseMatrix(dims = c(p,p), i=c(1:p), j=c(1:p) , x=rep(1, p)),"dgCMatrix");
 	  W0 <- as(Matrix::sparseMatrix(dims = c(p,p), i=c(1:p), j=c(1:p) , x=rep(1, p)),"dgCMatrix");
   }else{
+
+    if(nrow(X0)==ncol(X0)==p){
+      stop('#SQUIC: X0 must be square matrix with size pxp.');
+    } 
+
+    if(nrow(W0)==ncol(W0)==p){
+      stop('#SQUIC: W0 must be square matrix with size pxp.');
+    } 
+
     # Force symmetrix
     X0 <- Matrix::forceSymmetric(X0,uplo="L"); 
     W0 <- Matrix::forceSymmetric(W0,uplo="L"); 
@@ -55,7 +69,7 @@ SQUIC <- function(Y, lambda, max_iter=100, drop_tol=1e-3, term_tol=1e-3,verbose=
   output <- SQUIC::SQUIC_R(
    	Y , 
    	lambda , 
-   	max_iter , drop_tol , term_tol , 
+   	max_iter , inv_tol , term_tol , 
    	verbose , mode , 
    	M , X0 , W0);
 

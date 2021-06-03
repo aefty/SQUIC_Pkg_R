@@ -16,7 +16,7 @@ extern "C"
         long n, double *Y,
         double lambda,
         long *M_rinx, long *M_cptr, double *M_val, long M_nnz,
-        int max_iter, double drop_tol, double term_tol, int verbose,
+        int max_iter, double inv_tol, double term_tol, int verbose,
         long *&X_rinx, long *&X_cptr, double *&X_val, long &X_nnz,
         long *&W_rinx, long *&W_cptr, double *&W_val, long &W_nnz,
         int &info_num_iter,
@@ -33,7 +33,7 @@ using namespace arma;
 // [[Rcpp::plugins(cpp11)]]
 
 // [[Rcpp::export]]
-List SQUIC_R(arma::mat &Y, double lambda, int max_iter, double drop_tol, double term_tol, int verbose, int mode, arma::sp_mat &M, arma::sp_mat &X0, arma::sp_mat &W0) {
+List SQUIC_R(arma::mat &Y, double lambda, int max_iter, double inv_tol, double term_tol, int verbose, int mode, arma::sp_mat &M, arma::sp_mat &X0, arma::sp_mat &W0) {
 
     // Get the key size parameters
     long p =  Y.n_rows;
@@ -122,12 +122,12 @@ List SQUIC_R(arma::mat &Y, double lambda, int max_iter, double drop_tol, double 
         }
     }
 
-    // Default Result Values
+    // Default Result Valuess
     int    info_num_iter = 0;
     double info_logdetX  = 0.0;
     double info_trSX     = 0.0;
-    double *info_times_buffer = new double[6];
-    double *info_objective_buffer = new double[std::max(1, max_iter)];
+    double *info_times_buffer = new double[6]();
+    double *info_objective_buffer = new double[std::max(1, max_iter)]();
 
     // Run SQUIC
     SQUIC_CPP(
@@ -136,7 +136,7 @@ List SQUIC_R(arma::mat &Y, double lambda, int max_iter, double drop_tol, double 
         n, Y.memptr(),
         lambda,
         M_rinx, M_cptr, M_val, M_nnz,
-        max_iter, drop_tol, term_tol, verbose,
+        max_iter, inv_tol, term_tol, verbose,
         X_rinx, X_cptr, X_val, X_nnz,
         W_rinx, W_cptr, W_val, W_nnz,
         info_num_iter,

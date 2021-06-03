@@ -60,35 +60,41 @@ DEMO.performance <- function(type,p_set=c(4,16,64,256,1024,4096),lambda=0.4,n=10
 {
 
 	l=length(p_set)
-	out_squic		=replicate(l, 0);
-	out_equal		=replicate(l, 0);	
-	out_glasso		=replicate(l, 0);
+	out_squic    =replicate(l, 0);
+	out_equal    =replicate(l, 0);	
+	out_glasso   =replicate(l, 0);
+	out_BigQUIC  =replicate(l, 0);	
 
 	for (i in 1:l) {
 
-        p=p_set[i];
+    p=p_set[i];
 
-        # Generate data
-	    out=SQUIC::DEMO.generate_data( type=type , p=p , n=n );
-	    X_star=out$X_star;
-	    data=out$data;
+    # Generate data
+    out=SQUIC::DEMO.generate_data( type=type , p=p , n=n );
+    X_star=out$X_star;
+	  data=out$data;
 
 		print(sprintf("Benchmark for p=%d started",p));
 
-		out=SQUIC::DEMO.compare(alg="SQUIC"   , data=data , lambda=lambda ,  tol=tol , max_iter=max_iter , X_star=NULL);
+		out=SQUIC::DEMO.compare(alg="SQUIC"   , data=data  , lambda=lambda , tol=tol , max_iter=max_iter , X_star=NULL);
 		out_squic[i]=out$time;
 
-		out=SQUIC::DEMO.compare(alg="EQUAL"   , data=data , lambda=lambda ,   tol=tol , max_iter=max_iter , X_star=NULL);
+		out=SQUIC::DEMO.compare(alg="EQUAL"   , data=data  , lambda=lambda , tol=tol , max_iter=max_iter , X_star=NULL);
 		out_equal[i]=out$time;
 
-		out=SQUIC::DEMO.compare(alg="glasso"    ,  data=data , lambda=lambda , tol=tol , max_iter=max_iter , X_star=NULL);
-		out_glasso[i]=out$time;			
+		out=SQUIC::DEMO.compare(alg="glasso"  ,  data=data , lambda=lambda , tol=tol , max_iter=max_iter , X_star=NULL);
+		out_glasso[i]=out$time;		
+		
+		out=SQUIC::DEMO.compare(alg="BigQUIC" ,  data=data , lambda=lambda , tol=tol , max_iter=max_iter , X_star=NULL);
+		out_BigQUIC[i]=out$time;			
+		
 	}
 
 	output <- list(
 		"time_squic"   			= out_squic, 
-		"time_equal" 			= out_equal, 		
-		"time_glasso" 			= out_glasso 			
+		"time_equal" 			  = out_equal, 		
+		"time_glasso" 			= out_glasso, 	
+		"time_BigQUIC" 			= out_BigQUIC			
 		)
 
 	return(output);
@@ -103,14 +109,15 @@ DEMO.accuracy <- function(type,lambda_set=c(.2,.25,.3,.35,.4,.45,.5,.55,.6),p=10
 	X_star=out$X_star;
 	data=out$data;
 
-	l=length(lambda_set)
-	out_squic		=replicate(l, 0);
-	out_equal		=replicate(l, 0);	
+	l =length(lambda_set)
+	out_squic		  =replicate(l, 0);
+	out_equal		  =replicate(l, 0);	
 	out_glasso		=replicate(l, 0);
-
+	out_BigQUIC		=replicate(l, 0);
+	
 	for (i in 1:l) {
 
-        lambda=lambda_set[i];
+    lambda=lambda_set[i];
 
 		print(sprintf("Benchmark for lambda=%f started",lambda));
 
@@ -120,14 +127,18 @@ DEMO.accuracy <- function(type,lambda_set=c(.2,.25,.3,.35,.4,.45,.5,.55,.6),p=10
 		out=SQUIC::DEMO.compare(alg="EQUAL"   , data=data , lambda=lambda , tol=tol , max_iter=max_iter , X_star=X_star);
 		out_equal[i]=out$f1;
 
-		out=SQUIC::DEMO.compare(alg="glasso"  ,  data=data , lambda=lambda , tol=tol , max_iter=max_iter , X_star=X_star);
-		out_glasso[i]=out$f1;			
+		out=SQUIC::DEMO.compare(alg="glasso"  , data=data , lambda=lambda , tol=tol , max_iter=max_iter , X_star=X_star);
+		out_glasso[i]=out$f1;	
+		
+		out=SQUIC::DEMO.compare(alg="BigQUIC"  , data=data , lambda=lambda , tol=tol , max_iter=max_iter , X_star=X_star);
+		out_BigQUIC[i]=out$f1;	
 	}
 
 	output <- list(
 		"f1_squic"   			= out_squic, 
-		"f1_equal" 			    = out_equal, 		
-		"f1_glasso" 			= out_glasso 			
+		"f1_equal" 			  = out_equal, 		
+		"f1_glasso" 			= out_glasso,	
+		"f1_BigQUIC" 			= out_BigQUIC	
 		)
 
 	return(output);
@@ -135,7 +146,7 @@ DEMO.accuracy <- function(type,lambda_set=c(.2,.25,.3,.35,.4,.45,.5,.55,.6),p=10
 
 
 
-DEMO.accuracy_MS <- function(type,lambda=.5,alpha_set=c(.0001,.1,.2,.3,.4,.5,.6,.7,.8,.9,1),p=1024,n=100,tol=1e-3,max_iter=100) 
+DEMO.accuracy_MS <- function(type,lambda=1,alpha_set=c(.0001,.1,.2,.3,.4,.5,.6,.7,.8,.9,1),p=1024,n=100,tol=1e-3,max_iter=100) 
 {
 
   # Generate data
@@ -148,9 +159,9 @@ DEMO.accuracy_MS <- function(type,lambda=.5,alpha_set=c(.0001,.1,.2,.3,.4,.5,.6,
 	T = abs(out$S);
 	
 
-	l			<-length(alpha_set)
-	f1_squic	<-replicate(l, 0);
-	fro_squic	<-replicate(l, 0);	
+	l			    =length(alpha_set)
+	f1_squic	=replicate(l, 0);
+	fro_squic	=replicate(l, 0);	
 
 	for (i in 1:l) {
 
@@ -179,7 +190,7 @@ DEMO.accuracy_MS <- function(type,lambda=.5,alpha_set=c(.0001,.1,.2,.3,.4,.5,.6,
 }
 
 
-DEMO.accuracy_M <- function(type,c=0,lambda=.5,alpha_set=c(.0001,.1,.2,.3,.4,.5,.6,.7,.8,.9,1),p=1024,n=100,tol=1e-3,max_iter=100) 
+DEMO.accuracy_M <- function(type,c=0,lambda=.95,alpha_set=c(.0001,.1,.2,.3,.4,.5,.6,.7,.8,.9,1),p=1024,n=100,tol=1e-3,max_iter=100) 
 {
 
   # Generate data
@@ -205,7 +216,7 @@ DEMO.accuracy_M <- function(type,c=0,lambda=.5,alpha_set=c(.0001,.1,.2,.3,.4,.5,
 	  
 	  # reset M keeping the structure
 	  M@x=M@x*0+1;
-	  M = alpha*lambda*M;
+	  M = alpha*M;
 
 	  print(sprintf("Benchmark for alpha=%f started",alpha));
 
@@ -240,7 +251,7 @@ DEMO.compare <- function(alg,data,lambda=0.5,tol=1e-3,max_iter=100, X_star= NULL
 			Y=data,
 			lambda=lambda,
 			max_iter=max_iter, 
-			drop_tol=tol, 
+			inv_tol=tol, 
 			term_tol=tol, 
 			verbose=verbose,
 			M=M, 
@@ -281,6 +292,27 @@ DEMO.compare <- function(alg,data,lambda=0.5,tol=1e-3,max_iter=100, X_star= NULL
 			rho=1);
 
 		X	<-out$Omega[[1]];
+	}
+	else if(alg=="BigQUIC")
+	{
+	  print("#BigQUIC")
+	  # BigQUIC
+	  out	<-BigQuic::BigQuic(
+	    X = data_t, 
+	    inputFileName = NULL, 
+	    outputFileName = NULL, 
+	    lambda = lambda,
+	    numthreads = 4, 
+	    maxit = max_iter, 
+	    epsilon = tol, 
+	    k = 0,
+	    memory_size = 8000,
+	    verbose = 0, 
+	    isnormalized = 1, 
+	    seed = NULL, 
+	    use_ram = TRUE);
+	  
+	  X	<-out$precision_matrices[[1]];
 	}
 	else
 	{
