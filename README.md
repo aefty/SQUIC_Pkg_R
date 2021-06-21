@@ -9,7 +9,7 @@ Sys.setenv(R_LD_LIBRARY_PATH='$HOME')
 
 // Run the following command to install the library:
 
-library(devtools)
+library(devtools)  
 install_github("aefty/SQUIC_R")
 
 Note to install QUIC run the following comand in R:
