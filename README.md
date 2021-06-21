@@ -1,9 +1,11 @@
 # SQUIC_R
 
-// The following system environment variables need to be set:
+// Download the SQUIC shared library from https://github.com/aefty/SQUIC_Release_Source, follow its README instructions.
 
-export KMP_DUPLICATE_LIB_OK=TRUE
-export R_LD_LIBRARY_PATH=$HOME
+// Now some system environment variables need to be set. Run in R:
+
+Sys.setenv(KMP_DUPLICATE_LIB_OK='TRUE')
+Sys.setenv(R_LD_LIBRARY_PATH='$HOME')
 
 // Run the following command to install the library:
 
