@@ -4,7 +4,7 @@
 
 // Now some system environment variables need to be set. Run in R:
 
-Sys.setenv(KMP_DUPLICATE_LIB_OK='TRUE')
+Sys.setenv(KMP_DUPLICATE_LIB_OK='TRUE')  
 Sys.setenv(R_LD_LIBRARY_PATH='$HOME')
 
 // Run the following command to install the library:
@@ -17,11 +17,11 @@ install.packages("https://cran.r-project.org/src/contrib/Archive/QUIC/QUIC_1.1.1
 
 library(SQUIC)
 
-p=10
-n=130
-lambda=.5
-max_iter=10
-tol=1e-3
+p=10  
+n=130  
+lambda=.5  
+max_iter=10  
+tol=1e-3  
 
 iC_star <- Matrix::Diagonal(p);
 Data_train<-SQUIC_generate_data(iC_star,n,normalized=TRUE);
