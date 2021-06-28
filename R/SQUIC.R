@@ -33,7 +33,7 @@ SQUIC <- function(Y, lambda, max_iter=100, inv_tol=1e-3, term_tol=1e-3,verbose=1
 	  M = as(Matrix::sparseMatrix(dims = c(p,p), i={}, j={}),"dgCMatrix");
   }else{
 
-    if(nrow(M)==ncol(M)==p){
+    if(nrow(M)!= p || ncol(M)!=p){
       stop('#SQUIC: M must be square matrix with size pxp.');
     } 
 
@@ -50,11 +50,11 @@ SQUIC <- function(Y, lambda, max_iter=100, inv_tol=1e-3, term_tol=1e-3,verbose=1
 	  W0 <- as(Matrix::sparseMatrix(dims = c(p,p), i=c(1:p), j=c(1:p) , x=rep(1, p)),"dgCMatrix");
   }else{
 
-    if(nrow(X0)==ncol(X0)==p){
+    if(nrow(X0)!= p || ncol(X0)!=p){
       stop('#SQUIC: X0 must be square matrix with size pxp.');
     } 
 
-    if(nrow(W0)==ncol(W0)==p){
+    if(nrow(W0)!= p || ncol(W0)!=p){
       stop('#SQUIC: W0 must be square matrix with size pxp.');
     } 
 

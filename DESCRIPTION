@@ -4,8 +4,14 @@ Title: Sparse Quadratic approximate Inverse Covariance matrix estimation.
 Version: 1.2
 Date: 2020-12-07
 Author: Aeryan Eftekhari
-Maintainer: Who to complain to <yourfault@somewhere.net>
-Description: More about what it does (maybe more than one line)
+Description: SQUIC tackles the statistical problem of estimating large sparse 
+inverse covariance matrices. This estimation poses an ubiquitous 
+problem that arises in many applications e.g. coming from the 
+fields mathematical finance, geology and health. 
+SQUIC belongs to the class of second-order L1-regularized 
+Gaussian maximum likelihood methods and is especially suitable 
+for high-dimensional datasets with limited number of samples. 
+For further details please see the listed references.
 License: What license is it under?
 Imports: 
     Rcpp (>= 1.0.1),

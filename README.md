@@ -4,18 +4,25 @@
 
 // Now some system environment variables need to be set. Run in R:
 
+```angular2
 Sys.setenv(KMP_DUPLICATE_LIB_OK='TRUE')  
 Sys.setenv(R_LD_LIBRARY_PATH='$HOME')
+```
 
 // Run the following command to install the library:
 
+```angular2
 library(devtools)  
 install_github("aefty/SQUIC_R")
+```
 
 Note to install QUIC run the following comand in R:
 install.packages("https://cran.r-project.org/src/contrib/Archive/QUIC/QUIC_1.1.1.tar.gz", type="source")
 
+```angular2
+
 library(SQUIC)
+library(Matrix)
 
 p=10  
 n=130  
@@ -23,6 +30,15 @@ lambda=.5
 max_iter=10  
 tol=1e-3  
 
+# generate tridiagonal matrix
+iC_star = Matrix::bandSparse(p, p, (-1):1, list(rep(-.5, p-1), rep(1.25, p), rep(-.5, p-1)));
+
+# generate data
+z    = replicate(n,rnorm(p));
+iC_L = chol(iC_star);
+data = matrix(solve(iC_L,z),p,n);
+
+out <- SQUIC(
 iC_star <- Matrix::Diagonal(p);
 Data_train<-SQUIC_generate_data(iC_star,n,normalized=TRUE);
 Data_test<-SQUIC_generate_data(iC_star,3,normalized=TRUE);
@@ -36,3 +52,4 @@ S_test=cov(t(as.matrix(Data_test))) \*(ncol(Data_test)-1)/ncol(Data_test);
 sum(diag(a$X %\*% S_test))
 
 compileAttributes(verbose=TRUE)
+```
