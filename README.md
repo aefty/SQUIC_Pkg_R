@@ -6,14 +6,14 @@ This is the SQUIC algorithm, made available as a Python package. SQUIC tackles t
 
 ### Installation
 
-1) Download the SQUIC shared library from https://github.com/aefty/SQUIC_Release_Source, follow its README instructions.
+1) Download the SQUIC shared library from www.gitlab.ci.inf.usi.ch/SQUIC/libSQUIC, and follow its README instructions.
 
 2) Run the following command to install the library:
 
 ```angular2
 Sys.setenv(PATH_TO_libSQUIC="~/")
 library(devtools)  
-install_github("aefty/SQUIC_R")
+install_github("www.gitlab.ci.inf.usi.ch/SQUIC/SQUIC_R")
 ```
 
 ### Example
