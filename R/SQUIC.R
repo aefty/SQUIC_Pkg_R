@@ -1,7 +1,7 @@
 usethis::use_package("Matrix") 
 
 # Main function
-SQUIC <- function(Y, lambda, max_iter=100, inv_tol=1e-3, term_tol=1e-3,verbose=1, M=NULL, X0=NULL, W0=NULL) {
+SQUIC <- function(Y, lambda, max_iter=100, tol=1e-3,verbose=1, M=NULL, X0=NULL, W0=NULL) {
   
   verbose <- min(verbose,1);
   
@@ -21,12 +21,9 @@ SQUIC <- function(Y, lambda, max_iter=100, inv_tol=1e-3, term_tol=1e-3,verbose=1
   if(max_iter<0){
 	  stop('#SQUIC: max_iter cannot be negative.');
   }
-  if(inv_tol<=0){
-	  stop('#SQUIC: inv_tol must be great than zero.');
+  if(tol<=0){
+	  stop('#SQUIC: tol must be great than zero.');
   }
-  if(term_tol<=0){
-	  stop('#SQUIC: term_tol must be great than zero.');
-  } 
 
   if(is.null(M)){
 	  # Make empty sparse matrix of type dgCMatrix.
@@ -65,6 +62,10 @@ SQUIC <- function(Y, lambda, max_iter=100, inv_tol=1e-3, term_tol=1e-3,verbose=1
   
   #Use block variant of SQUIC
   mode <- 0; 
+  
+  # Hard code both tollerance to be the same
+  term_tol = tol;
+  inv_tol  = tol;
 
   output <- SQUIC::SQUIC_R(
    	Y , 
