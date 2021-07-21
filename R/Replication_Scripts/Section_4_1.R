@@ -1,17 +1,55 @@
-# SECTION 4.1: Unit Test Experiments
+# SECTION 4.1: Tests with Synthetic Data
     
 # ================================== #
 #    Load the necessary packages     #
 # ================================== #
 
-library(MLmetrics)
-library(glasso)
-library(BigQuic)
-library(EQUAL)
-library(Matrix)
 library(SQUIC)
+
+if (!require("Matrix", quietly = TRUE)) {
+  install.packages("Matrix")
+}
+library(Matrix)
+
+if (!require("devtools", quietly = TRUE)) {
+  install.packages("devtools")
+}
+library(devtools)
+
+if (!require("MLmetrics", quietly = TRUE)) {
+  install.packages("MLmetrics")
+}
+library(MLmetrics)
+
+if (!require("glasso", quietly = TRUE)) {
+  install.packages("glasso")
+}
+library(glasso)
+
+
+if (!require("BigQuic", quietly = TRUE)) {
+  install.packages("BigQuic")
+}
+library(BigQuic)
+
+if (!require("ggplot2", quietly = TRUE)) {
+  install.packages("ggplot2")
+}
 library(ggplot2)
+
+if (!require("EQUAL", quietly = TRUE)) {
+  devtools::install_github("cescwang85/EQUAL")
+}
+library(EQUAL)
+
+if (!require("scales", quietly = TRUE)) {
+  install.packages("scales")
+}
 library(scales)
+
+if (!require("latex2exp", quietly = TRUE)) {
+  install.packages("latex2exp")
+}
 library(latex2exp)
 # ================================== #
 
@@ -31,23 +69,23 @@ generate_data<-function(type,p,n,normalize)
   
   print(sprintf("# Generating Percision Matrix: type=%s p=%d n=%d",type,p,n));
   
-  if(type=="trid") # Tridiagiaonl matrix for iC_star 
+  if(type=="trid") # Tridiagiaonl matrix for X_star 
   {
-    iC_star = Matrix::bandSparse(p, p,
+    X_star = Matrix::bandSparse(p, p,
                                  (-1):1,
                                  list(rep(-.5, p-1), 
                                       rep(1.25, p), 
                                       rep(-.5, p-1)));
   }
-  else if(type=="rand")  # Random matrix for iC_star (averag of 5 nnz per row) 
+  else if(type=="rand")  # Random matrix for X_star (averag of 5 nnz per row) 
   {
     nnz_per_row=5; 
     
     # Make PSD symmetric Random Matrix
-    iC_star=Matrix::rsparsematrix(nrow=p,ncol=p,nnz=nnz_per_row*p/2,symmetric=TRUE);# we need the divide by 2 (R assuming symmetric)
-    x=Matrix::rowSums(abs(iC_star))+1;
+    X_star=Matrix::rsparsematrix(nrow=p,ncol=p,nnz=nnz_per_row*p/2,symmetric=TRUE);# we need the divide by 2 (R assuming symmetric)
+    x=Matrix::rowSums(abs(X_star))+1;
     D=Matrix::Diagonal(p,x);
-    iC_star=iC_star+D;
+    X_star=X_star+D;
     
   }else{
     stop("Unknown matrix type.")
@@ -55,8 +93,8 @@ generate_data<-function(type,p,n,normalize)
   
   # Generate data
   z    = replicate(n,rnorm(p));
-  iC_L = chol(iC_star);
-  data = matrix(solve(iC_L,z),p,n);
+  X_L  = chol(X_star);
+  data = matrix(solve(X_L,z),p,n);
   
   finish_time = Sys.time()
   print(sprintf("# Generating Data: time=%f",finish_time-start_time));
@@ -64,13 +102,13 @@ generate_data<-function(type,p,n,normalize)
   if(normalize){
     output <- list(
       "data"   = t(scale(t(data))),
-      "X_star" = iC_star,
+      "X_star" = X_star,
       "var"    = apply(data,1,var)
     );
   }else{
     output <- list(
       "data"   = data, 
-      "X_star" = iC_star
+      "X_star" = X_star
     );
   }
   
@@ -86,7 +124,7 @@ compare <- function(alg,data,lambda,tol,max_iter, X_star, M)
   # lambda  : scalar sparsity parameter
   # tol     : termination tolerance
   # max_iter: maximum number of iterations
-  # X_star  : WHAT IS X STAR?
+  # X_star  : true precision matrix
   # M       : graphical bias for the matrix sparsity parameter
 {
   data_t <- t(data);

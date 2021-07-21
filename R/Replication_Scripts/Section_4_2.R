@@ -1,19 +1,44 @@
 # SECTION 4.2: Medical Data Classification with Structural Information
 
+# ======================================== #
+#        Set the working directory         #
+# ======================================== #
+
 if (file.exists("Reproduction_data.rda")){
     load('Reproduction_data.rda')
 } else {
-    print("Set the working directory to the folder that contains
-        the reproduction data")
+    print("Set the working directory to the folder that contains the reproduction data")
         print("setwd(PATH-TO-CURR-DIR)")
 }    
 # ======================================== #
 #       Load the necessary packages        #
 # ======================================== #
+
 library(SQUIC)
+
+if (!require("Matrix", quietly = TRUE)) {
+    install.packages("Matrix")
+}
 library(Matrix)
+
+if (!require("devtools", quietly = TRUE)) {
+    install.packages("devtools")
+}
+library(devtools)
+
+if (!require("datamicroarray", quietly = TRUE)) {
+    devtools::install_github('ramhiser/datamicroarray')
+}
 library(datamicroarray)
+
+if (!require("caret", quietly = TRUE)) {
+    install.packages("caret")
+}
 library(caret)
+
+if (!require("ggplot2", quietly = TRUE)) {
+    install.packages("ggplot2")
+}
 library(ggplot2)
 # ======================================== #
 
@@ -61,9 +86,9 @@ Linear_DA <- function(Data_Train, labels_train,
 
 # datasets under consideration
 datasets  = c('burczynski','yeoh','shipp','alon','sorlie')
-# optimal scalar sparsity parameters
+# optimal scalar tuning parameters
 lambdas   = c(0.7, 0.8, 0.8, 0.8, 0.5)
-# parameters for the estimation of the matrix sparsity parameter
+# parameters for the estimation of the matrix tuning parameter
 eta       = 0.1; lambda_bias    = 0.95;
 ACC_Bias  = vector(); ACC_No_Bias = vector(); time_Bias = vector(); time_No_Bias = vector();
 
@@ -131,7 +156,7 @@ barplot(t(times_all), beside=TRUE, font.axis=2,
         xlab="Dataset", ylab="Time (sec)",
         # cex.axis=1.5, cex.names = 1.5, cex.main = 1.5, cex.lab=1.5,
         col=c("chartreuse4","brown4"),
-        ylim=c(0,max(times_all)+20), legend=c("Scalar Sparsity Parameter", "Matrix Sparsity Parameter"),
+        ylim=c(0,max(times_all)+20), legend=c("Scalar Tuning Parameter", "Matrix Tuning Parameter"),
         args.legend = list(x = "top", inset=c(-0.0, -0.00),
                            bty = "n", ncol = 2)
 );
