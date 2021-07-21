@@ -16,8 +16,8 @@ PLATFORM:=$(shell echo $$OSTYPE)
 
 $(info )
 ifndef PATH_TO_libSQUIC
- PATH_TO_libSQUIC:=${HOME}
-$(error ## Environment variable PATH_TO_libSQUIC is not set. Use e.g., Sys.setenv(PATH_TO_libSQUIC="~/"). ##)
+PATH_TO_libSQUIC:=${HOME}
+$(error ## Environment variable PATH_TO_libSQUIC is not set. Default PATH_TO_libSQUIC=${PATH_TO_libSQUIC}. Use e.g., Sys.setenv(PATH_TO_libSQUIC="~/Other") to change. ##)
 endif
 $(info ## PATH_TO_libSQUIC=${PATH_TO_libSQUIC} ##)
 $(info )
@@ -46,7 +46,7 @@ $(info )
 ifneq ("$(wildcard $(FILE_PATH_TO_libSQUIC) )","")
  $(info	## ${FILE_PATH_TO_libSQUIC} found ! <<)
 else
- $(error ## ${FILE_PATH_TO_libSQUIC} not found. Go to www.squic.com and download ... ##)
+ $(error ## ${FILE_PATH_TO_libSQUIC} not found. ##)
 endif
 $(info )
 
