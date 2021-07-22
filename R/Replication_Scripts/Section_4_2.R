@@ -47,6 +47,11 @@ library(ggplot2)
 # ======================================== #
 Linear_DA <- function(Data_Train, labels_train, 
                             Data_Test, labels_test, Theta_est)
+  # Data_Train   = input training data in the form p (dimensions) x n (samples)
+  # labels_train = vector with the labels of the training data
+  # Data_Test    = input testing data in the form p (dimensions) x n (samples)
+  # labels_test  = vector with the labels of the training data
+  # Theta_est    = estimated precision matrix
 {
         
         # Initialize  

@@ -58,9 +58,9 @@ library(latex2exp)
 #    Generate synthetic datasets     #
 # ================================== #
 generate_data<-function(type,p,n,normalize)
-  # type = "trid" or "rand"
-  # p = number of dimesions
-  # n = number of samples
+  # type      = "trid" or "rand"
+  # p         = number of dimesions
+  # n         = number of samples
   # normalize = TRUE or FALSE
 {
   set.seed(0);
@@ -69,7 +69,7 @@ generate_data<-function(type,p,n,normalize)
   
   print(sprintf("# Generating Percision Matrix: type=%s p=%d n=%d",type,p,n));
   
-  if(type=="trid") # Tridiagiaonl matrix for X_star 
+  if(type=="trid") # Tridiagonal matrix for X_star 
   {
     X_star = Matrix::bandSparse(p, p,
                                  (-1):1,
@@ -77,7 +77,7 @@ generate_data<-function(type,p,n,normalize)
                                       rep(1.25, p), 
                                       rep(-.5, p-1)));
   }
-  else if(type=="rand")  # Random matrix for X_star (averag of 5 nnz per row) 
+  else if(type=="rand")  # Random matrix for X_star (average of 5 nnz per row) 
   {
     nnz_per_row=5; 
     
@@ -119,13 +119,13 @@ generate_data<-function(type,p,n,normalize)
 #  Compare precision matrix estimation packages   #
 # =============================================== #
 compare <- function(alg,data,lambda,tol,max_iter, X_star, M) 
-  # alg     : "SQUIC" or "glasso" or "EQUAL" or "BigQUIC"
-  # data    : input data in the form p (dimensions) x n (samples)
-  # lambda  : scalar sparsity parameter
-  # tol     : termination tolerance
-  # max_iter: maximum number of iterations
-  # X_star  : true precision matrix
-  # M       : graphical bias for the matrix sparsity parameter
+  # alg      = "SQUIC" or "glasso" or "EQUAL" or "BigQUIC"
+  # data     = input data in the form p (dimensions) x n (samples)
+  # lambda   = scalar sparsity parameter
+  # tol      = termination tolerance
+  # max_iter = maximum number of iterations
+  # X_star   = true precision matrix
+  # M        = graphical bias for the matrix sparsity parameter
 {
   data_t <- t(data);
   
@@ -296,12 +296,12 @@ performance <- function(type,p_set,lambda,n,tol,max_iter)
 #  Evaluate the accuracy in the estimation of precision matrices     #
 # ================================================================== #
 accuracy <- function(type,lambda_set,p,n,tol,max_iter) 
-  # type     = "trid" or "rand"
+  # type       = "trid" or "rand"
   # lambda_set =  path for the scalar sparsity parameter
   # p          = the dimensions of the dataset in question
-  # n        = number of samples
-  # tol      = termination tolerance of the algorithms
-  # max_iter = maximum number of iterations for all algorithms
+  # n          = number of samples
+  # tol        = termination tolerance of the algorithms
+  # max_iter   = maximum number of iterations for all algorithms
 {
   
   # Generate data
@@ -349,14 +349,14 @@ accuracy <- function(type,lambda_set,p,n,tol,max_iter)
 #  when using a matrix sparsity parameter                            #
 # ================================================================== #
 accuracy_M <- function(type,c,lambda,alpha_set,p,n,tol,max_iter)
-  # type: "trid" or "rand"
-  # c: noise level (additional nonzeros)
-  # lambda: scalar sparsity parameter
-  # alpha_set: \eta parameter in the estimation of the matrix M
-  # p: the dimensions of the dataset in question
-  # n: number of samples
-  # tol: termination tolerance of the algorithms
-  # max_iter: maximum number of iterations for all algorithms
+  # type      = "trid" or "rand"
+  # c         = noise level (additional nonzeros)
+  # lambda    = scalar sparsity parameter
+  # alpha_set = \eta parameter in the estimation of the matrix M
+  # p         = the dimensions of the dataset in question
+  # n         = number of samples
+  # tol       = termination tolerance of the algorithms
+  # max_iter  = maximum number of iterations for all algorithms
 {
   
   # Generate data
