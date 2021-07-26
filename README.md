@@ -30,16 +30,13 @@ lambda=.5
 max_iter=10  
 tol=1e-3  
 
-# generate tridiagonal matrix
+# generate a tridiagonal matrix
 iC_star = Matrix::bandSparse(p, p, (-1):1, list(rep(-.5, p-1), rep(1.25, p), rep(-.5, p-1)));
 
-# generate data
+# generate the data
 z    = replicate(n,rnorm(p));
 iC_L = chol(iC_star);
 data = matrix(solve(iC_L,z),p,n);
 
 out<-SQUIC(data,lambda)
 ```
-
-Note to install QUIC run the following comand in R:
-install.packages("https://cran.r-project.org/src/contrib/Archive/QUIC/QUIC_1.1.1.tar.gz", type="source")
