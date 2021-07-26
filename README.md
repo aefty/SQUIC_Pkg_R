@@ -4,7 +4,7 @@ SQUIC is a second-order, L1-regularized maximum likelihood method for performant
 
 ## Installation
 
-Step 1: Download the the shared library libSQUIC from www.gitlab.ci.inf.usi.ch/SQUIC/libSQUIC, and follow its README instructions. The default and recommended location for libSQUIC is the home directory, i.e., ``~/``.
+Step 1: Download the shared library libSQUIC from www.gitlab.ci.inf.usi.ch/SQUIC/libSQUIC, and follow its README instructions. The default and recommended location for libSQUIC is the home directory, i.e., ``~/``.
 
 Step 2: Run the following command to install the library:
 ```angular2
