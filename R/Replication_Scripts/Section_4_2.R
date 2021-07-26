@@ -32,7 +32,7 @@ if (!require("datamicroarray", quietly = TRUE)) {
 library(datamicroarray)
 
 if (!require("caret", quietly = TRUE)) {
-    install.packages("caret",repos = "http://cran.us.r-project.org")
+    install.packages("caret",dependencies = TRUE,repos = "http://cran.us.r-project.org")
 }
 library(caret)
 
@@ -40,6 +40,12 @@ if (!require("ggplot2", quietly = TRUE)) {
     install.packages("ggplot2",repos = "http://cran.us.r-project.org")
 }
 library(ggplot2)
+
+# if (!require("e1071", quietly = TRUE)) {
+ #    install.packages("ggplot2",repos = "http://cran.us.r-project.org")
+ #}
+ #library(e1071)
+
 # ======================================== #
 
 # ======================================== #
@@ -173,7 +179,7 @@ pdf("Figure4b.pdf")
 barplot(t(ACC_all),beside=TRUE, col=c("chartreuse4","brown4"),
         # main = "Figure 4b: Accuracy for the LDA experiments",
         font.axis=2, ylab="ACC", xlab="Dataset",
-        legend=c("Scalar Sparsity Parameter", "Matrix Sparsity Parameter"),
+        legend=c("Scalar Tuning Parameter", "Matrix Tuning Parameter"),
         ylim=c(0.5,1), xpd = FALSE,
         args.legend = list(x = "top", inset=c(-0.0, -0.00),
                            bty = "n", ncol = 2)
