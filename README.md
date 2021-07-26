@@ -11,7 +11,6 @@ This is the SQUIC algorithm, made available as a Python package. SQUIC tackles t
 2) Run the following command to install the library:
 
 ```angular2
-Sys.setenv(PATH_TO_libSQUIC="~/")
 library(devtools)  
 install_github("www.gitlab.ci.inf.usi.ch/SQUIC/SQUIC_R")
 ```
