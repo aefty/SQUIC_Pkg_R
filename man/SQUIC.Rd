@@ -1,6 +1,5 @@
 \name{SQUIC}
 \alias{SQUIC}
-\docType{package}
 
 \title{
 	\packageTitle{SQUIC}
@@ -51,6 +50,8 @@ Bollhöfer, M., Eftekhari, A., Scheidegger, S. and Schenk, O., 2019. Large-scale
 Eftekhari, A., Bollhöfer, M. and Schenk, O., 2018, November. Distributed memory sparse inverse covariance      matrix estimation on high-performance computing architectures. In SC18: International Conference for High   Performance Computing, Networking, Storage and Analysis (pp. 253-264). IEEE.
 
 Eftekhari A, Pasadakis D, Bollhöfer M, Scheidegger S, Schenk O (2021). Block-Enhanced PrecisionMatrix          Estimation for Large-Scale Datasets. Journal of Computational Science, p. 101389.
+}
+
 
 \examples{
 
@@ -71,7 +72,7 @@ Eftekhari A, Pasadakis D, Bollhöfer M, Scheidegger S, Schenk O (2021). Block-En
  iC_L = chol(iC_star);
  data = matrix(solve(iC_L,z),p,n);
 
-# Run SQUIC
+ # Run SQUIC
  out<-SQUIC(data,lambda)
  }
 
