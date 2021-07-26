@@ -18,7 +18,7 @@ SQUIC is a second-order, L1-regularized maximum likelihood method for performant
  \item{max_iter}{Maximum number of Newton iterations of outer loop. Default: 100.}
  \item{tol}{Tolerance for convergence and approximate inversion. Default: 1e-3.}
  \item{verbose}{Level of printing output (0 or 1). Default: 1}
- \item{M}{The matrix encoding the sparsity pattern of the matrix tuning parameter, i.e., \Lambda (p by p). Default: NULL.}
+ \item{M}{The matrix encoding the sparsity pattern of the matrix tuning parameter, i.e., Lambda (p by p). Default: NULL.}
  \item{X0}{Initial guess of precision matrix (p by p). Default: NULL.}
  \item{W0}{Initial guess of the inverse of the precision matrix (p by p). Default: NULL.}
  }

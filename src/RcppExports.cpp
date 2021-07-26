@@ -6,6 +6,11 @@
 
 using namespace Rcpp;
 
+#ifdef RCPP_USE_GLOBAL_ROSTREAM
+Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
+Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
+#endif
+
 // SQUIC_R
 List SQUIC_R(arma::mat& Y, double lambda, int max_iter, double inv_tol, double term_tol, int verbose, int mode, arma::sp_mat& M, arma::sp_mat& X0, arma::sp_mat& W0);
 RcppExport SEXP _SQUIC_SQUIC_R(SEXP YSEXP, SEXP lambdaSEXP, SEXP max_iterSEXP, SEXP inv_tolSEXP, SEXP term_tolSEXP, SEXP verboseSEXP, SEXP modeSEXP, SEXP MSEXP, SEXP X0SEXP, SEXP W0SEXP) {
