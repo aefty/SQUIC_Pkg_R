@@ -8,8 +8,5 @@ Description: SQUIC tackles the statistical problem of estimating large sparse in
 License: What license is it under?
 Imports: 
     Rcpp (>= 1.0.1),
-    Matrix,
-    MLmetrics,
-    MASS,
-    BigQuic
+    Matrix
 LinkingTo: Rcpp, RcppArmadillo
