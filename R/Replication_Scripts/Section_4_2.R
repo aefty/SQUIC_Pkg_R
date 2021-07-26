@@ -145,7 +145,7 @@ time_Bias[i]  = res_tree$info_time_total;
 Theta_tree    = D %*% res_tree$X %*% D;
 
 # Linear Discriminant Analysis
-LDA_tree   = Linear_DA(Data_Train, labels_train,
+LDA_tree    = Linear_DA(Data_Train, labels_train,
                         Data_Test, labels_test, Theta_tree)
 ACC_Bias[i] = LDA_tree$Results$overall[1];
 }
