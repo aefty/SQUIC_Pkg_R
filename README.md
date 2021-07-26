@@ -1,31 +1,25 @@
-# SQUIC_R
-
-### Sparse Quadratic Inverse Covariance Estimation
+# SQUIC R Interface Package
 
 SQUIC is a second-order, L1-regularized maximum likelihood method for performant large-scale sparse precision matrix estimation. This repository contains the source code for the R interface of SQUIC. 
 
-### Installation
+## Installation
 
-1) Download the the shared library libSQUIC from www.gitlab.ci.inf.usi.ch/SQUIC/libSQUIC, and follow its README instructions. The default and recommended location for libSQUIC is the home directory, i.e., ``~/``.
+Step 1: Download the the shared library libSQUIC from www.gitlab.ci.inf.usi.ch/SQUIC/libSQUIC, and follow its README instructions. The default and recommended location for libSQUIC is the home directory, i.e., ``~/``.
 
-2) Run the following command to install the library:
-
+Step 2: Run the following command to install the library:
 ```angular2
 library(devtools)  
 install_github("www.gitlab.ci.inf.usi.ch/SQUIC/SQUIC_R")
 ```
-
-3) Load the SQUIC package:
-
+Step 3: Load the SQUIC package:
 ```angular2
 library(SQUIC)  
 ```
-
 For further details type help(SQUIC) in the R command line.
 
+_Note: The number of threads used by SQUIC can be defined by setting the enviroment variable OMP_NUM_THREADS (e.g., ``bash> export  OMP_NUM_THREADS=12``) (this will require a restart of the R session)._
 
-
-### Example
+## Example
 
 To run a simple example : 
 
