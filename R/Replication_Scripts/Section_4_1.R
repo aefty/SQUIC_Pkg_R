@@ -125,7 +125,7 @@ compare <- function(alg,data,lambda,tol,max_iter, X_star, M)
   # tol      = termination tolerance
   # max_iter = maximum number of iterations
   # X_star   = true precision matrix
-  # M        = graphical bias for the matrix sparsity parameter
+  # M        = graphical bias for the matrix tuning parameter
 {
   data_t <- t(data);
   
@@ -245,7 +245,7 @@ compare <- function(alg,data,lambda,tol,max_iter, X_star, M)
 performance <- function(type,p_set,lambda,n,tol,max_iter)
   # type     = "trid" or "rand"
   # p_set    = the dimensions of the datasets in question
-  # lambda   = scalar sparsity parameter
+  # lambda   = scalar tuning parameter
   # n        = number of samples
   # tol      = termination tolerance of the algorithms
   # max_iter = maximum number of iterations for all algorithms
@@ -297,7 +297,7 @@ performance <- function(type,p_set,lambda,n,tol,max_iter)
 # ================================================================== #
 accuracy <- function(type,lambda_set,p,n,tol,max_iter) 
   # type       = "trid" or "rand"
-  # lambda_set =  path for the scalar sparsity parameter
+  # lambda_set = path for the scalar tuning parameter
   # p          = the dimensions of the dataset in question
   # n          = number of samples
   # tol        = termination tolerance of the algorithms
@@ -312,12 +312,12 @@ accuracy <- function(type,lambda_set,p,n,tol,max_iter)
   l = length(lambda_set)
   out_squic		= replicate(l, 0);
   out_equal		= replicate(l, 0);	
-  out_glasso		= replicate(l, 0);
-  out_BigQUIC		= replicate(l, 0);
+  out_glasso	= replicate(l, 0);
+  out_BigQUIC	= replicate(l, 0);
   
   for (i in 1:l) {
     
-    lambda=lambda_set[i];
+    lambda = lambda_set[i];
     
     print(sprintf("Benchmark for lambda=%f started",lambda));
     
@@ -336,7 +336,7 @@ accuracy <- function(type,lambda_set,p,n,tol,max_iter)
   
   output <- list(
     "f1_squic"   			= out_squic, 
-    "f1_equal" 			        = out_equal, 		
+    "f1_equal" 		        = out_equal, 		
     "f1_glasso" 			= out_glasso,	
     "f1_BigQUIC" 			= out_BigQUIC	
   )
@@ -346,12 +346,12 @@ accuracy <- function(type,lambda_set,p,n,tol,max_iter)
 
 # ================================================================== #
 #  Evaluate the accuracy in the estimation of precision matrices     #
-#  when using a matrix sparsity parameter                            #
+#  when using a matrix tuning parameter                              #
 # ================================================================== #
 accuracy_M <- function(type,c,lambda,alpha_set,p,n,tol,max_iter)
   # type      = "trid" or "rand"
   # c         = noise level (additional nonzeros)
-  # lambda    = scalar sparsity parameter
+  # lambda    = scalar tuning parameter
   # alpha_set = \eta parameter in the estimation of the matrix M
   # p         = the dimensions of the dataset in question
   # n         = number of samples
@@ -460,7 +460,7 @@ ggplot(RAND_ALL_TIMES, aes(x=p_set)) +
 dev.off()
 
 # ============================================================  #
-# Run the accuracy experiments with a scalar sparsity parameter #
+# Run the accuracy experiments with a scalar tuning parameter   #
 # ============================================================  #
 
 # lambda path 
@@ -511,7 +511,7 @@ ggplot(RAND_ALL_FSCORE, aes(x=lambda_set)) +
 dev.off()
 
 # ============================================================  #
-# Run the accuracy experiments with a matrix sparsity parameter #
+# Run the accuracy experiments with a matrix tuning parameter   #
 # ============================================================  #
 
 # level of noise
