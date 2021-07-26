@@ -11,73 +11,46 @@ SQUIC is a second-order, L1-regularized maximum likelihood method for performant
 }
 
 \usage{
- glasso(s, rho, nobs=NULL, zero=NULL, thr=1.0e-4, maxit=1e4,  approx=FALSE,
- penalize.diagonal=TRUE, start=c("cold","warm"),
- w.init=NULL,wi.init=NULL, trace=FALSE)
+ SQUIC(Y, lambda, max_iter = 100, tol = 1e-3, verbose = 1, M = NULL,  X0=NULL, W0 = NULL)
  }
  \arguments{
- \item{s}{Covariance matrix:p by p matrix (symmetric)}
- \item{rho}{(Non-negative) regularization parameter for lasso. rho=0 means no regularization. Can be a scalar    (usual) or a symmetric p by p matrix, or a vector of length p. In the latter case, the penalty matrix has jkth  element sqrt(rho[j]*rho[k]).}
- \item{nobs}{Number of observations used in computation of the  covariance matrix s. This quantity is need to    compute the value of  log-likelihood.
- If not specified, loglik will be returned as NA.}
- \item{zero}{(Optional) indices of entries of inverse covariance to be constrained to be zero. The input should  be a matrix with two columns, each row indicating
- the indices of elements to be constrained to be zero. The solution must be symmetric, so you need only          specify one of (j,k) and (k,j). An entry in the zero matrix
- overrides any entry in the rho matrix for a given element.}
- \item{thr}{Threshold for convergence. Default value is 1e-4.  Iterations stop when average absolute parameter   change is less than thr * ave(abs(offdiag(s)))}
- \item{maxit}{Maximum number of iterations of outer loop. Default 10,000}
- \item{approx}{Approximation flag: if true, computes Meinhausen-Buhlmann(2006)
- approximation}
- \item{penalize.diagonal}{Should diagonal of inverse covariance be penalized?
- Dafault TRUE.}
- \item{start}{Type of start. Cold start is default. Using Warm start, can provide starting values for w and wi}
- \item{w.init}{Optional starting values for estimated covariance matrix (p by p).
- Only needed when start="warm" is specified}
- \item{wi.init}{Optional starting values for estimated inverse covariance matrix (p by p)
- Only needed when start="warm" is specified}
- \item{trace}{Flag for printing out information as iterations proceed.
- Default FALSE}
+ \item{Y}{input data in the form p (dimensions) x n (samples)}
+ \item{lambda}{(Non-negative) Scalar tuning parameter controlling the sparsity of the precision matrix. lambda=0 means no regularization.}
+ \item{max_iter}{Maximum number of Newton iterations of outer loop. Default: 100}
+ \item{tol}{Tolerance for convergence. Iterations stop when ... Default: 1e-3}
+ \item{verbose}{Level of printing output. Default: 1}
+ \item{X0}{Optional starting values for the estimated precision matrix (p by p). Default: NULL}
+ \item{wi.init}{Optional starting values for the estimated inverse of the precision matrix (p by p).
+ Default: NULL}
  }
 
 
 \details{
- Estimates a sparse inverse covariance matrix using a lasso (L1) penalty,
- using the approach of Friedman, Hastie and Tibshirani (2007).
- The Meinhausen-Buhlmann (2006) approximation is also implemented.
- The algorithm can also be used to estimate a graph with missing edges,
- by specifying which edges to omit in the zero argument, and setting rho=0.
- Or both fixed zeroes for some elements and regularization on the other elements
- can be specified.
-
- This version 1.7 uses a block diagonal screening rule to speed up
- computations considerably. Details are given in the paper "New insights
- and fast computations for the graphical lasso" by Daniela Witten, Jerry
- Friedman, and Noah Simon, to appear in "Journal of Computational and
- Graphical Statistics". The idea is as follows: it is possible to quickly
- check whether the solution to the graphical lasso problem will be block
- diagonal, for a given value of the tuning parameter. If so, then one can
- simply apply the graphical lasso algorithm to each block separately,
- leading to massive speed improvements.
+ Estimates a sparse precision matrix using the L1-regularized maximum likelihood (ML) 
+ approach, commonly referred to as the "graphical lasso" method. 
  }
  
  \value{
  A list with components
- \item{w}{Estimated covariance matrix}
- \item{wi}{Estimated inverse covariance matrix}
- \item{loglik}{Value of maximized log-likelihodo+penalty}
- \item{errflag}{Memory allocation error flag: 0 means no error; !=0 means
-  memory allocation error - no output returned}
- \item{approx}{Value of input argument approx}
- \item{del}{Change in parameter value at convergence}
- \item{niter}{Number of iterations of outer loop used by algorithm}
+ \item{X}{Estimated precision matrix}
+ \item{W}{Estimated inverse of the precision matrix}
+ \item{info_time_total}{Total time spent}
+ \item{info_time_sample_cov}{Time spent for the estimation of the sample covariance matrix}
+ \item{info_time_optimize}{Time spent in the ...}
+ \item{info_time_factor}{Time spent in the Cholesky factorization}
+ \item{info_time_approximate_inv}{Time spent in the approximate inversion of X}
+ \item{info_time_coordinate_upd}{Time spend in the block coordinate descent update}
+ \item{info_objective}{Value of the objective at each Newton iteration}
+ \item{info_logdetX}{Value of the log determinant of X}
+ \item{info_trSX}{Value of trace(SX)}
  }
 
 \references{
- Bollhöfer, M., Eftekhari, A., Scheidegger, S. and Schenk, O., 2019. Large-scale sparse inverse covariance   matrix estimation. SIAM Journal on Scientific Computing, 41(1), pp.A380-A401.\url{https://epubs.siam.org/doi/abs/10.   1137/17M1147615?journalCode=sjoce3}
+Bollhöfer, M., Eftekhari, A., Scheidegger, S. and Schenk, O., 2019. Large-scale sparse inverse covariance   matrix estimation. SIAM Journal on Scientific Computing, 41(1), pp.A380-A401.
 
-Eftekhari, A., Bollhöfer, M. and Schenk, O., 2018, November. Distributed memory sparse inverse covariance      matrix estimation on high-performance computing architectures. In SC18: International Conference for High   Performance Computing, Networking, Storage and Analysis (pp. 253-264). IEEE.  \url{https://dl.acm.org/doi/10.5555/       3291656.3291683}
+Eftekhari, A., Bollhöfer, M. and Schenk, O., 2018, November. Distributed memory sparse inverse covariance      matrix estimation on high-performance computing architectures. In SC18: International Conference for High   Performance Computing, Networking, Storage and Analysis (pp. 253-264). IEEE.
 
-Eftekhari A, Pasadakis D, Bollhöfer M, Scheidegger S, Schenk O (2021). Block-Enhanced PrecisionMatrix          Estimation for Large-Scale Datasets. Journal of Computational Science, p. 101389. \url{https://www.sciencedirect.com/   science/article/pii/S1877750321000776}
-}
+Eftekhari A, Pasadakis D, Bollhöfer M, Scheidegger S, Schenk O (2021). Block-Enhanced PrecisionMatrix          Estimation for Large-Scale Datasets. Journal of Computational Science, p. 101389.
 
 \examples{
 
@@ -98,6 +71,7 @@ Eftekhari A, Pasadakis D, Bollhöfer M, Scheidegger S, Schenk O (2021). Block-En
  iC_L = chol(iC_star);
  data = matrix(solve(iC_L,z),p,n);
 
+# Run SQUIC
  out<-SQUIC(data,lambda)
  }
 
