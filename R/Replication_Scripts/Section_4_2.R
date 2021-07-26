@@ -17,12 +17,12 @@ if (file.exists("Reproduction_data.rda")){
 library(SQUIC)
 
 if (!require("Matrix", quietly = TRUE)) {
-    install.packages("Matrix")
+    install.packages("Matrix",repos = "http://cran.us.r-project.org")
 }
 library(Matrix)
 
 if (!require("devtools", quietly = TRUE)) {
-    install.packages("devtools")
+    install.packages("devtools",repos = "http://cran.us.r-project.org")
 }
 library(devtools)
 
@@ -32,12 +32,12 @@ if (!require("datamicroarray", quietly = TRUE)) {
 library(datamicroarray)
 
 if (!require("caret", quietly = TRUE)) {
-    install.packages("caret")
+    install.packages("caret",repos = "http://cran.us.r-project.org")
 }
 library(caret)
 
 if (!require("ggplot2", quietly = TRUE)) {
-    install.packages("ggplot2")
+    install.packages("ggplot2",repos = "http://cran.us.r-project.org")
 }
 library(ggplot2)
 # ======================================== #

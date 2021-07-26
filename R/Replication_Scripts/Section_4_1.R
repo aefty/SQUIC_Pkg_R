@@ -7,33 +7,33 @@
 library(SQUIC)
 
 if (!require("Matrix", quietly = TRUE)) {
-  install.packages("Matrix")
+  install.packages("Matrix",repos = "http://cran.us.r-project.org")
 }
 library(Matrix)
 
 if (!require("devtools", quietly = TRUE)) {
-  install.packages("devtools")
+  install.packages("devtools",repos = "http://cran.us.r-project.org")
 }
 library(devtools)
 
 if (!require("MLmetrics", quietly = TRUE)) {
-  install.packages("MLmetrics")
+  install.packages("MLmetrics",repos = "http://cran.us.r-project.org")
 }
 library(MLmetrics)
 
 if (!require("glasso", quietly = TRUE)) {
-  install.packages("glasso")
+  install.packages("glasso",repos = "http://cran.us.r-project.org")
 }
 library(glasso)
 
 
 if (!require("BigQuic", quietly = TRUE)) {
-  install.packages("BigQuic")
+  install.packages("BigQuic",repos = "http://cran.us.r-project.org")
 }
 library(BigQuic)
 
 if (!require("ggplot2", quietly = TRUE)) {
-  install.packages("ggplot2")
+  install.packages("ggplot2",repos = "http://cran.us.r-project.org")
 }
 library(ggplot2)
 
@@ -43,12 +43,12 @@ if (!require("EQUAL", quietly = TRUE)) {
 library(EQUAL)
 
 if (!require("scales", quietly = TRUE)) {
-  install.packages("scales")
+  install.packages("scales",repos = "http://cran.us.r-project.org")
 }
 library(scales)
 
 if (!require("latex2exp", quietly = TRUE)) {
-  install.packages("latex2exp")
+  install.packages("latex2exp",repos = "http://cran.us.r-project.org")
 }
 library(latex2exp)
 # ================================== #
@@ -414,13 +414,13 @@ RAND_ALL_TIMES = cbind(as.data.frame(timings_rand),p_set)
 # Open the pdf file
 pdf("Figure1a.pdf") 
 ggplot(TRID_ALL_TIMES, aes(x=p_set)) +
-  geom_line(aes(y  = time_squic, colour = "SQUIC"), linetype="solid", eta=.5) +
+  geom_line(aes(y  = time_squic, colour = "SQUIC"), linetype="solid", alpha=.5) +
   geom_point(aes(y = time_squic, colour = "SQUIC")) +
-  geom_line(aes(y  = time_equal, colour = "EQUAL"), linetype="dotdash", eta=.5) +
+  geom_line(aes(y  = time_equal, colour = "EQUAL"), linetype="dotdash", alpha=.5) +
   geom_point(aes(y = time_equal, colour = "EQUAL")) +
-  geom_line(aes(y  = time_glasso, colour = "glasso"), linetype="twodash", eta=.5)  +
+  geom_line(aes(y  = time_glasso, colour = "glasso"), linetype="twodash", alpha=.5)  +
   geom_point(aes(y = time_glasso, colour = "glasso")) +
-  geom_line(aes(y  = time_BigQUIC, colour = "BigQUIC"), linetype="longdash", eta=.5)  +
+  geom_line(aes(y  = time_BigQUIC, colour = "BigQUIC"), linetype="longdash", alpha=.5)  +
   geom_point(aes(y = time_BigQUIC, colour = "BigQUIC")) +
   scale_x_continuous(breaks=p_set, trans = "log10") +
   scale_y_continuous(trans = "log10",
@@ -438,13 +438,13 @@ dev.off()
 # Open the pdf file
 pdf("Figure1b.pdf") 
 ggplot(RAND_ALL_TIMES, aes(x=p_set)) +
-  geom_line(aes(y  = time_squic, colour = "SQUIC"), linetype="solid", eta=.5) +
+  geom_line(aes(y  = time_squic, colour = "SQUIC"), linetype="solid", alpha=.5) +
   geom_point(aes(y = time_squic, colour = "SQUIC")) +
-  geom_line(aes(y  = time_equal, colour = "EQUAL"), linetype="dotdash", eta=.5) +
+  geom_line(aes(y  = time_equal, colour = "EQUAL"), linetype="dotdash", alpha=.5) +
   geom_point(aes(y = time_equal, colour = "EQUAL")) +
-  geom_line(aes(y  = time_glasso, colour = "glasso"), linetype="twodash", eta=.5)  +
+  geom_line(aes(y  = time_glasso, colour = "glasso"), linetype="twodash", alpha=.5)  +
   geom_point(aes(y = time_glasso, colour = "glasso")) +
-  geom_line(aes(y  = time_BigQUIC, colour = "BigQUIC"), linetype="longdash", eta=.5)  +
+  geom_line(aes(y  = time_BigQUIC, colour = "BigQUIC"), linetype="longdash", alpha=.5)  +
   geom_point(aes(y = time_BigQUIC, colour = "BigQUIC")) +
   scale_x_continuous(breaks=p_set, trans = "log10") +
   scale_y_continuous(trans = "log10",
@@ -474,13 +474,13 @@ RAND_ALL_FSCORE = cbind(as.data.frame(accuracy_rand),lambda_set)
 # Open the pdf file
 pdf("Figure2a.pdf") 
 ggplot(TRID_ALL_FSCORE, aes(x=lambda_set)) +
-  geom_line(aes(y  = f1_squic, colour = "SQUIC"), linetype="solid", eta=.5) +
+  geom_line(aes(y  = f1_squic, colour = "SQUIC"), linetype="solid", alpha=.5) +
   geom_point(aes(y = f1_squic, colour = "SQUIC")) +
-  geom_line(aes(y  = f1_equal, colour = "EQUAL"), linetype="dotdash", eta=.5) +
+  geom_line(aes(y  = f1_equal, colour = "EQUAL"), linetype="dotdash", alpha=.5) +
   geom_point(aes(y = f1_equal, colour = "EQUAL")) +
-  geom_line(aes(y  = f1_glasso, colour = "glasso"), linetype="twodash", eta=.5)  +
+  geom_line(aes(y  = f1_glasso, colour = "glasso"), linetype="twodash", alpha=.5)  +
   geom_point(aes(y = f1_glasso, colour = "glasso")) +
-  geom_line(aes(y  = f1_BigQUIC, colour = "BigQUIC"), linetype="longdash", eta=.5)  +
+  geom_line(aes(y  = f1_BigQUIC, colour = "BigQUIC"), linetype="longdash", alpha=.5)  +
   geom_point(aes(y = f1_BigQUIC, colour = "BigQUIC")) +
   ylab(TeX("F1-Score")) +
   xlab(TeX("Scalar Sparsity Parameter $(\\lambda)$")) +
@@ -493,13 +493,13 @@ dev.off()
 # Open the pdf file
 pdf("Figure2b.pdf") 
 ggplot(RAND_ALL_FSCORE, aes(x=lambda_set)) +
-  geom_line(aes(y  = f1_squic, colour = "SQUIC"), linetype="solid", eta=.5) +
+  geom_line(aes(y  = f1_squic, colour = "SQUIC"), linetype="solid", alpha=.5) +
   geom_point(aes(y = f1_squic, colour = "SQUIC")) +
-  geom_line(aes(y  = f1_equal, colour = "EQUAL"), linetype="dotdash", eta=.5) +
+  geom_line(aes(y  = f1_equal, colour = "EQUAL"), linetype="dotdash", alpha=.5) +
   geom_point(aes(y = f1_equal, colour = "EQUAL")) +
-  geom_line(aes(y  = f1_glasso, colour = "glasso"), linetype="twodash", eta=.5)  +
+  geom_line(aes(y  = f1_glasso, colour = "glasso"), linetype="twodash", alpha=.5)  +
   geom_point(aes(y = f1_glasso, colour = "glasso")) +
-  geom_line(aes(y  = f1_BigQUIC, colour = "BigQUIC"), linetype="longdash", eta=.5)  +
+  geom_line(aes(y  = f1_BigQUIC, colour = "BigQUIC"), linetype="longdash", alpha=.5)  +
   geom_point(aes(y = f1_BigQUIC, colour = "BigQUIC")) +
   ylab(TeX("F1-Score")) +
   xlab(TeX("Scalar Sparsity Parameter $(\\lambda)$")) +
@@ -537,11 +537,11 @@ FSCORE_M_TRID = cbind(as.data.frame(accuracy_M_trid_1$f1_squic), as.data.frame(a
 # Open the pdf file
 pdf("Figure3a.pdf") 
 ggplot(FSCORE_M_TRID, aes(x=eta_set)) +
-  geom_line(aes(y  = accuracy_M_trid_1$f1_squic, colour = "c = 0"), linetype="solid", eta=.5) +
+  geom_line(aes(y  = accuracy_M_trid_1$f1_squic, colour = "c = 0"), linetype="solid", alpha=.5) +
   geom_point(aes(y = accuracy_M_trid_1$f1_squic, colour = "c = 0")) +
-  geom_line(aes(y  = accuracy_M_trid_2$f1_squic, colour = "c = 2"), linetype="twodash", eta=.5)  +
+  geom_line(aes(y  = accuracy_M_trid_2$f1_squic, colour = "c = 2"), linetype="twodash", alpha=.5)  +
   geom_point(aes(y = accuracy_M_trid_2$f1_squic, colour = "c = 2")) +
-  geom_line(aes(y  = accuracy_M_trid_3$f1_squic, colour = "c = 10"), linetype="longdash", eta=.5)  +
+  geom_line(aes(y  = accuracy_M_trid_3$f1_squic, colour = "c = 10"), linetype="longdash", alpha=.5)  +
   geom_point(aes(y = accuracy_M_trid_3$f1_squic, colour = "c = 10")) +
   ylab(TeX("F1-Score")) +
   xlab(TeX("Bias Parameter $(\\eta)$")) +
@@ -569,11 +569,11 @@ FSCORE_M_RAND = cbind(as.data.frame(accuracy_M_rand_1$f1_squic), as.data.frame(a
 # Open the pdf file
 pdf("Figure3b.pdf") 
 ggplot(FSCORE_M_RAND, aes(x=eta_set)) +
-  geom_line(aes(y  = accuracy_M_rand_1$f1_squic, colour = "c = 0"), linetype="solid", eta=.5) +
+  geom_line(aes(y  = accuracy_M_rand_1$f1_squic, colour = "c = 0"), linetype="solid", alpha=.5) +
   geom_point(aes(y = accuracy_M_rand_1$f1_squic, colour = "c = 0")) +
-  geom_line(aes(y  = accuracy_M_rand_2$f1_squic, colour = "c = 2"), linetype="twodash", eta=.5)  +
+  geom_line(aes(y  = accuracy_M_rand_2$f1_squic, colour = "c = 2"), linetype="twodash", alpha=.5)  +
   geom_point(aes(y = accuracy_M_rand_2$f1_squic, colour = "c = 2")) +
-  geom_line(aes(y  = accuracy_M_rand_3$f1_squic, colour = "c = 10"), linetype="longdash", eta=.5)  +
+  geom_line(aes(y  = accuracy_M_rand_3$f1_squic, colour = "c = 10"), linetype="longdash", alpha=.5)  +
   geom_point(aes(y = accuracy_M_rand_3$f1_squic, colour = "c = 10")) +
   ylab(TeX("F1-Score")) +
   xlab(TeX("Bias Parameter $(\\eta)$")) +
