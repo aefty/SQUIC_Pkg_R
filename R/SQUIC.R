@@ -76,20 +76,3 @@ SQUIC <- function(Y, lambda, max_iter=100, tol=1e-3,verbose=1, M=NULL, X0=NULL, 
 
   return(output);
 }
-
-# Sparse Sample covariance matrix
-SQUIC_S<-function(Y, lambda,verbose=1, M=NULL){
-
-	# Get sample covarinace matrix by running SQUIC with max_iter=0;
-	output <- SQUIC::SQUIC( 
-		Y        =Y, 
-		lambda   =lambda,
-		max_iter =0,  
-		verbose  =verbose, 
-    M        =M, 
-    X0       =NULL,
-    W0       =NULL);
-
-	return(output);
-}
-

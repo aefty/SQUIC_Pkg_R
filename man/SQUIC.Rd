@@ -27,6 +27,9 @@ SQUIC is a second-order, L1-regularized maximum likelihood method for performant
 \details{
 SQUIC is a high-performance precision matrix estimation package intended for large-scale applications. The algorithm utilizes second-order information in conjunction with a highly optimized, supernodal Cholesky factorization routine (CHOLMOD), a block-oriented computational approach for both the coordinate descent and the approximate matrix inversion, and finally, a sparse representation of the sample covariance matrix. The library is implemented in C++ with shared-memory parallelization using OpenMP.
 For further details, please see the listed references.
+
+Note: If max_iter=0, the returned value for the inverse of the precision matrix (W) is the sparse sample covariance matrix (S).
+
 }
  
  \value{
