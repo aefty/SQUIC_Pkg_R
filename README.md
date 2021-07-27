@@ -8,9 +8,11 @@ Step 1: Download the shared library libSQUIC from www.gitlab.ci.inf.usi.ch/SQUIC
 
 Step 2: Run the following command to install the library:
 ```angular2
-library(devtools)  
+library(devtools) 
 install_github("www.gitlab.ci.inf.usi.ch/SQUIC/SQUIC_R")
 ```
+_Note: The ``devtools`` package can be install via the command ``install.packages("devtools")``._
+
 Step 3: Load the SQUIC package:
 ```angular2
 library(SQUIC)  
