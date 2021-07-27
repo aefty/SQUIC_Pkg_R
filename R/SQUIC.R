@@ -34,15 +34,14 @@ SQUIC <- function(Y, lambda, max_iter=100, tol=1e-3,verbose=1, M=NULL, X0=NULL, 
       stop('#SQUIC: M must be square matrix with size pxp.');
     } 
 
-    # Make all postive, drop all zeros and force symmetrix
+    # Make all postive, drop all zeros and force symmetric
     M = Matrix::drop0(M);
     M <- abs(M);
   	M <- Matrix::forceSymmetric(M,uplo="L"); 
   }
 
   if(is.null(X0) || is.null(W0)){
-
-	  # Make empty sparse matrix of type dgCMatrix.
+	  # Make identity sparse matrix of type dgCMatrix.
 	  X0 <- as(Matrix::sparseMatrix(dims = c(p,p), i=c(1:p), j=c(1:p) , x=rep(1, p)),"dgCMatrix");
 	  W0 <- as(Matrix::sparseMatrix(dims = c(p,p), i=c(1:p), j=c(1:p) , x=rep(1, p)),"dgCMatrix");
   }else{
@@ -55,7 +54,7 @@ SQUIC <- function(Y, lambda, max_iter=100, tol=1e-3,verbose=1, M=NULL, X0=NULL, 
       stop('#SQUIC: W0 must be square matrix with size pxp.');
     } 
 
-    # Force symmetrix
+    # Force Symmetric
     X0 <- Matrix::forceSymmetric(X0,uplo="L"); 
     W0 <- Matrix::forceSymmetric(W0,uplo="L"); 
   }

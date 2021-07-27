@@ -17,7 +17,7 @@ library(SQUIC)
 ```
 For further details type ``help(SQUIC)`` in the R command line.
 
-_Note: The number of threads used by SQUIC can be defined by setting the enviroment variable OMP_NUM_THREADS (e.g., ``bash> export  OMP_NUM_THREADS=12``). This will require a restart of the R session)._
+_Note: The number of threads used by SQUIC can be defined by setting the enviroment variable OMP_NUM_THREADS (e.g., ``base> export OMP_NUM_THREADS=12``). This may require a restart of the session)._
 
 ## Example
 
@@ -29,8 +29,6 @@ library(SQUIC)
 p = 1024
 n = 100
 lambda = .4
-max_iter = 100
-tol = 1e-3
 
 # generate a tridiagonal matrix
 iC_star = Matrix::bandSparse(p, p, (-1):1, list(rep(-.5, p-1), rep(1.25,   p), rep(-.5, p-1)));
