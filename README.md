@@ -26,17 +26,20 @@ To run a simple example :
 ```angular2
 library(SQUIC)
 
-  p = 1024
-  n = 100
-  lambda = .4
-  max_iter = 100
-  tol = 1e-3
+p = 1024
+n = 100
+lambda = .4
+max_iter = 100
+tol = 1e-3
 
-  # generate a tridiagonal matrix
-  iC_star = Matrix::bandSparse(p, p, (-1):1, list(rep(-.5, p-1), rep(1.25,   p), rep(-.5, p-1)));
+# generate a tridiagonal matrix
+iC_star = Matrix::bandSparse(p, p, (-1):1, list(rep(-.5, p-1), rep(1.25,   p), rep(-.5, p-1)));
 
-  # generate the data
-  z    = replicate(n,rnorm(p));
-  iC_L = chol(iC_star);
-  data = matrix(solve(iC_L,z),p,n);
+# generate the data
+z    = replicate(n,rnorm(p));
+iC_L = chol(iC_star);
+data = matrix(solve(iC_L,z),p,n);
+
+# Run SQUIC
+out <- SQUIC(data,lambda)
 ```
