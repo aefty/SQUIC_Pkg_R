@@ -17,7 +17,7 @@ library(SQUIC)
 ```
 For further details type ``help(SQUIC)`` in the R command line.
 
-_Note: The number of threads used by SQUIC can be defined by setting the enviroment variable OMP_NUM_THREADS (e.g., ``bash> export  OMP_NUM_THREADS=12``). This will require a restart of the R session).
+_Note: The number of threads used by SQUIC can be defined by setting the enviroment variable OMP_NUM_THREADS (e.g., ``bash> export  OMP_NUM_THREADS=12``). This will require a restart of the R session)._
 
 ## Example
 
